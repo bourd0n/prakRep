@@ -1,5 +1,7 @@
 package aleksandrov.homework1;
 
+import java.util.Arrays;
+
 public class PriorityQueue {
 
     private class QueueElement{
@@ -25,6 +27,14 @@ public class PriorityQueue {
         public int getPriority() {
             return priority;
         }
+
+        @Override
+        public String toString() {
+            return "QueueElement{" +
+                    "object=" + object +
+                    ", priority=" + priority +
+                    '}';
+        }
     }
 
     private QueueElement[] elements;
@@ -35,12 +45,12 @@ public class PriorityQueue {
 
     public PriorityQueue() {
         this.elements = new QueueElement[DEFAULT_SIZE];
-        this.size = DEFAULT_SIZE;
+        this.size = 0;
     }
 
     public PriorityQueue(int size){
         this.elements = new QueueElement[size];
-        this.size = size;
+        this.size = 0;
     }
 
     public void add(Object object, int priority){
@@ -54,10 +64,10 @@ public class PriorityQueue {
         }
 
         size ++;
-        elements[size] = new QueueElement(object, priority);
+        elements[size-1] = new QueueElement(object, priority);
 
-        int i = size;
-        while (i > 1 && (elements[i].getPriority() > elements[i/2].getPriority())){
+        int i = size - 1;
+        while (i > 0 && (elements[i].getPriority() > elements[i/2].getPriority())){
             QueueElement tempElement = new QueueElement(elements[i/2].getObject(), elements[i/2].getPriority());
             elements[i/2] = elements[i];
             elements[i] = tempElement;
@@ -65,12 +75,23 @@ public class PriorityQueue {
         }
     }
 
-    public Object[] getObjectsWithHightestPriority(){
-        return null;
+    public Object getMaxElement(){
+        Object result =  elements[0].getObject();
+        //todo: modify queue
+
+
+        return result;
     }
 
     public int size(){
         return 0;
     }
 
+    @Override
+    public String toString() {
+        return "PriorityQueue{" +
+                "elements=" + (elements == null ? null : Arrays.asList(elements)) +
+                ", size=" + size +
+                '}';
+    }
 }
