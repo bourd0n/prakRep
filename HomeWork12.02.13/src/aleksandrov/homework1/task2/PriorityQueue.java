@@ -82,11 +82,21 @@ public class PriorityQueue {
         int i = 0;
         int j;
         while (i < size / 2) {
-            if (2 * i + 1 < size && elements[2 * i + 1].getPriority() < elements[2 * i + 2].getPriority())
-                j = 2 * i + 2;
+            //if (2 * i + 1 < size && elements[2 * i + 1].getPriority() < elements[2 * i + 2].getPriority())
+            //    j = 2 * i + 2;
+            //else
+            //
+            //j = 2 * i + 1;
+            if (2 * i + 1 < size){
+                if (elements[2 * i + 1].getPriority() >= elements[2 * i + 2].getPriority())
+                    j = 2 * i + 1;
+                else
+                    j = 2 * i + 2;
+            }
             else
                 j = 2 * i + 1;
-            if (elements[i].getPriority() < elements[j].getPriority()) {
+            //if (elements[i].getPriority() < elements[j].getPriority()) {
+            if (elements[i].getPriority() <= elements[j].getPriority()) {
                 QueueElement tempElement = new QueueElement(elements[i].getObject(), elements[i].getPriority());
                 elements[i] = elements[j];
                 elements[j] = tempElement;
@@ -100,6 +110,7 @@ public class PriorityQueue {
     public int size(){
         return size;
     }
+
 
     @Override
     public String toString() {

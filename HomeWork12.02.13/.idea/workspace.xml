@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" name="Default" comment="Some fixes">
+    <list default="true" id="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/aleksandrov/homework1/Main.java" afterPath="$PROJECT_DIR$/src/aleksandrov/homework1/Main.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/aleksandrov/homework1/task2/PriorityQueue.java" afterPath="$PROJECT_DIR$/src/aleksandrov/homework1/task2/PriorityQueue.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MOVED" beforePath="I:\programming\prak\prakRep\HomeWork12.02.13\src\aleksandrov\homework1\FirstTaskClass.java" afterPath="$PROJECT_DIR$/src/aleksandrov/homework1/task1/FirstTaskClass.java" />
-      <change type="MOVED" beforePath="I:\programming\prak\prakRep\HomeWork12.02.13\src\aleksandrov\homework1\PriorityQueue.java" afterPath="$PROJECT_DIR$/src/aleksandrov/homework1/task2/PriorityQueue.java" />
     </list>
     <ignored path="HomeWork12.02.13.iws" />
     <ignored path=".idea/workspace.xml" />
     <file path="/Task1.java" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360497827606" ignored="false" />
-    <file path="/Main.java" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360614153834" ignored="false" />
-    <file path="/PriorityQueue.java" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360614185434" ignored="false" />
-    <file path="/fragment.java" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360499169993" ignored="false" />
-    <file path="/Dummy.txt" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360614253068" ignored="false" />
+    <file path="/Main.java" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360615971939" ignored="false" />
+    <file path="/PriorityQueue.java" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360616877594" ignored="false" />
+    <file path="/fragment.java" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360619356368" ignored="false" />
+    <file path="/Dummy.txt" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360614286712" ignored="false" />
     <file path="/FirstTaskClass.java" changelist="9a9dd12d-dd4a-45c0-ade3-f479bdccca71" time="1360612069233" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -75,6 +74,22 @@
       </breakpoint>
     </breakpoint_any>
     <breakpoint_rules default_suspend_policy="SuspendAll" default_condition_enabled="true" />
+    <line_breakpoints>
+      <breakpoint url="file://$PROJECT_DIR$/src/aleksandrov/homework1/task2/PriorityQueue.java" line="77" class="aleksandrov.homework1.task2.PriorityQueue" package="aleksandrov.homework1.task2">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="SUSPEND" value="true" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="true" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
     <breakpoint_rules />
     <ui_properties />
   </component>
@@ -84,10 +99,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Main.java" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="Main.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/aleksandrov/homework1/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="49" selection-start="419" selection-end="419" vertical-scroll-proportion="0.36363637">
+            <state line="24" column="121" selection-start="699" selection-end="699" vertical-scroll-proportion="0.0">
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -104,10 +119,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="PriorityQueue.java" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="PriorityQueue.java" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/aleksandrov/homework1/task2/PriorityQueue.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="59" column="31" selection-start="1490" selection-end="1490" vertical-scroll-proportion="0.0">
+            <state line="89" column="42" selection-start="2456" selection-end="2456" vertical-scroll-proportion="0.802168">
               <folding />
             </state>
           </provider>
@@ -163,8 +178,8 @@
         <option value="$PROJECT_DIR$/src/aleksandrov/homework1/FirstTaskClass.java" />
         <option value="$PROJECT_DIR$/src/aleksandrov/homework1/PriorityQueue.java" />
         <option value="$PROJECT_DIR$/src/aleksandrov/homework1/task1/FirstTaskClass.java" />
-        <option value="$PROJECT_DIR$/src/aleksandrov/homework1/task2/PriorityQueue.java" />
         <option value="$PROJECT_DIR$/src/aleksandrov/homework1/Main.java" />
+        <option value="$PROJECT_DIR$/src/aleksandrov/homework1/task2/PriorityQueue.java" />
       </list>
     </option>
   </component>
@@ -458,7 +473,11 @@
       <created>1360534341904</created>
       <updated>1360534341904</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="getElementWithMaxPriority implemented">
+      <created>1360614294115</created>
+      <updated>1360614294115</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TodoView" selected-index="0">
@@ -495,12 +514,12 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3293718" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32879046" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25833333" sideWeight="0.56558776" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25833333" sideWeight="0.3781942" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32954547" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25833333" sideWeight="0.42248723" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3270869" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25833333" sideWeight="0.28279388" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3270869" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -546,7 +565,7 @@
     <option name="MAXIMUM_HISTORY_ROWS" value="1000" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="Some fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="getElementWithMaxPriority implemented" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -561,6 +580,7 @@
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
     <MESSAGE value="Add method realization" />
     <MESSAGE value="Some fixes" />
+    <MESSAGE value="getElementWithMaxPriority implemented" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
@@ -668,19 +688,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/aleksandrov/homework1/task2/PriorityQueue.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="59" column="31" selection-start="1490" selection-end="1490" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/aleksandrov/homework1/Main.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="49" selection-start="419" selection-end="419" vertical-scroll-proportion="0.36363637">
+        <state line="24" column="121" selection-start="699" selection-end="699" vertical-scroll-proportion="0.0">
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/aleksandrov/homework1/task2/PriorityQueue.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="89" column="42" selection-start="2456" selection-end="2456" vertical-scroll-proportion="0.802168">
+          <folding />
         </state>
       </provider>
     </entry>
