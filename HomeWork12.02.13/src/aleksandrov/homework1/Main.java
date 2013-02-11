@@ -1,5 +1,8 @@
 package aleksandrov.homework1;
 
+import aleksandrov.homework1.task1.FirstTaskClass;
+import aleksandrov.homework1.task2.PriorityQueue;
+
 public class Main {
     public static void main(String[] args) {
         FirstTaskClass ftc = new FirstTaskClass();
@@ -18,6 +21,18 @@ public class Main {
         pq.add(10, 10);
         pq.add(11, 11);
         pq.add(16, 16);
+        pq.add(17, 17);
+        pq.add(18, 18);
+        pq.add(19, 19);
+        System.out.println("size " + pq.size());
         System.out.println(pq);
+
+        Object obj = null;
+        do {
+            obj = pq.getElementWithMaxPriority();
+            System.out.println(obj);
+
+        } while (obj != null);
+        System.out.println("size " + pq.size());
     }
 }
