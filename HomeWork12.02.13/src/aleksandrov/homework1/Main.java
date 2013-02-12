@@ -2,6 +2,7 @@ package aleksandrov.homework1;
 
 import aleksandrov.homework1.task1.FirstTaskClass;
 import aleksandrov.homework1.task2.PriorityQueue;
+import aleksandrov.homework1.task3.Sorter;
 
 public class Main {
     public static void main(String[] args) {
@@ -36,9 +37,15 @@ public class Main {
         Object obj = null;
         while (pq.size() > 0)    {
             obj = pq.getElementWithMaxPriority();
-            System.out.println(obj);
+            System.out.print(obj + " ");
 
         }
-        System.out.println("size " + pq.size());
+        System.out.println();
+        Sorter sorter = new Sorter();
+        Integer[] arr = new Integer[]{1, 2, 5, 6, -1, -2, 10, 9, 7, 1, 105};
+        sorter.sort(arr);
+        for (Integer anArr : arr)
+            System.out.print(anArr + " ");
+        //System.out.println("size " + pq.size());
     }
 }
