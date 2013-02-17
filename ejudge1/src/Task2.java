@@ -58,38 +58,67 @@ public class Task2 {
     private static class RevFilter extends Filter {
         @Override
         public String run(String input) {
-           // return new StringBuffer(input).reverse().toString();
-            if (input.length() <= 1)
-                return input;
-            return this.run(input.substring(1, input.length())) + input.charAt(0);
+            return new StringBuffer(input).reverse().toString();
+            //if (input.length() <= 1)
+            //    return input;
+            //return this.run(input.substring(1, input.length())) + input.charAt(0);
         }
     }
 
     private static class FstFilter extends Filter {
         @Override
         public String run(String input) {
-            if (input.length() <= 1)
-                return input;
-            Character firstChar = input.charAt(0);
-            return firstChar + this.run(input.replaceAll(firstChar.toString(), ""));
+            //if (input.length() < 1)
+            //    return input;
+            //Character firstChar = input.charAt(0);
+            //return firstChar + this.run(input.replaceAll(firstChar.toString(), ""));
+            String tmp = input;
+            String result = "";
+            Character firstChar = null;
+            while (tmp.length() >= 1){
+                firstChar = tmp.charAt(0);
+                result += firstChar;
+                tmp = tmp.replaceAll(firstChar.toString(), "");
+            }
+            return result;
         }
     }
 
     private static class DpcFilter extends Filter {
         @Override
         public String run(String input) {
-            if (input.length() < 1)
-                return input;
-            Character firstChar = input.charAt(0);
-            String v = new String(new char[]{firstChar, firstChar});
-            return v + this.run(input.substring(1, input.length()));
+            //if (input.length() < 1)
+            //    return input;
+            //Character firstChar = input.charAt(0);
+            //String v = new String(new char[]{firstChar, firstChar});
+            //return v + this.run(input.substring(1, input.length()));
+            /*String tmp = input;
+            String result = "";
+            Character firstChar = null;
+            while (tmp.length() >= 1){
+                firstChar = tmp.charAt(0);
+                String v = new String(new char[]{firstChar, firstChar});
+                result += v;
+                tmp = tmp.substring(1, tmp.length());
+            }
+            return result;*/
+            char[] chars = input.toCharArray();
+            char[] result = new char[input.length() * 2];
+            int j = 0;
+            for (int i=0; i < chars.length; i++){
+                result[j] = chars[i];
+                result[j+1] = chars[i];
+                j += 2;
+            }
+
+            return new String(result);
         }
     }
 
     private static class CutFilter extends Filter {
         @Override
         public String run(String input) {
-            if (input.length() < 10)
+            if (input.length() <= 10)
                 return input;
             else
                 return input.substring(0, 10);
@@ -100,8 +129,8 @@ public class Task2 {
 
         private String filtersLine;
         FilterSplitter(String filtersLine) {
-            if (filtersLine == null || filtersLine.isEmpty())
-                throw new IllegalArgumentException("Input line shouldn't be empty");
+            //if (filtersLine == null || filtersLine.isEmpty())
+            //    throw new IllegalArgumentException("Input line shouldn't be empty");
             this.filtersLine = filtersLine;
         }
 
@@ -124,11 +153,11 @@ public class Task2 {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(new InputStreamReader(System.in));
-        while (scanner.hasNext()){
+        //while (scanner.hasNext()){
         String filtersLine = scanner.nextLine();
         String input = scanner.nextLine();
-        if (input == null)
-            throw new IllegalArgumentException("Should be 2 lines");
+        //if (input == null)
+        //    throw new IllegalArgumentException("Should be 2 lines");
         FilterSplitter filterSplitter = new FilterSplitter(filtersLine);
         ArrayList<Filter> filters = filterSplitter.getFilters();
         String result = input;
@@ -137,7 +166,7 @@ public class Task2 {
         }
 
         System.out.println(result);
-        }
+        //}
     }
 
 }
