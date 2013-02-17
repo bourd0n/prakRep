@@ -26,6 +26,7 @@ public class Main {
         pq.add(18, 18);
         pq.add(19, 19);
         //
+        pq.add(111, 8);
         pq.add(21, 10);
         pq.add(22, 10);
         pq.add(23, 10);
@@ -42,7 +43,7 @@ public class Main {
         }
         System.out.println();
         Sorter sorter = new Sorter();
-        Integer[] arr = new Integer[]{1, 2, 5, 6, -1, -2, 10, 9, 7, 1, 105};
+        Integer[] arr = new Integer[]{1, 2, 5, 6, -1, -2, 10, 9, 7, 1, 105, 2};
         sorter.sort(arr);
         for (Integer anArr : arr)
             System.out.print(anArr + " ");

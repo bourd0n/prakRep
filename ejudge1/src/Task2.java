@@ -8,16 +8,22 @@ public class Task2 {
 
     static Map<String, Filter> filtersMap = new HashMap<String, Filter>(){{
         put("eql", new EqualStringFilter());
-        put("upc", new UpcaseStringFilter());
+        put("upc", new UpcaseFilter());
+        put("dwn", new DwnFilter());
+        put("dup", new DupFilter());
+        put("rev", new RevFilter());
+        put("fst", new FstFilter());
+        put("dpc", new DpcFilter());
+        put("cut", new CutFilter());
     }};
 
 
 
-    static abstract class Filter{
+    private static abstract class Filter{
         public abstract String run(String input);
     }
 
-    static class EqualStringFilter extends Filter{
+    private static class EqualStringFilter extends Filter{
 
         @Override
         public String run(String input) {
@@ -25,7 +31,7 @@ public class Task2 {
         }
     }
 
-    static class UpcaseStringFilter extends Filter{
+    private static class UpcaseFilter extends Filter{
 
         @Override
         public String run(String input) {
@@ -33,42 +39,69 @@ public class Task2 {
         }
     }
 
-/*    enum Filters{
-        EQL("eql", new eqlFilter()),
-        UPC("upc"),
-        DWN("dwn"),
-        DUP("dup"),
-        REV("rev"),
-        FST("fst"),
-        DPC("dpc"),
-        CUT("cut");
-        private final String cmd;
-        private final Filter filter;
-
-        private Filters(final String cmd, final Filter filter) {
-            this.cmd = cmd;
-            this.filter = filter;
+    private static class DwnFilter extends Filter {
+        @Override
+        public String run(String input) {
+            //return input.replaceAll("\\p{javaUpperCase}", "");
+            return input.replaceAll("\\p{Upper}", "");
         }
+    }
 
-        public String getCmd(){
-            return cmd;
+    private static class DupFilter extends Filter {
+        @Override
+        public String run(String input) {
+            return input + input;
         }
+    }
 
-        public Filter getFilter(){
-            return filter;
-        }
 
-        public static Filters findFilter (String s){
-         if (this.)
+    private static class RevFilter extends Filter {
+        @Override
+        public String run(String input) {
+           // return new StringBuffer(input).reverse().toString();
+            if (input.length() <= 1)
+                return input;
+            return this.run(input.substring(1, input.length())) + input.charAt(0);
         }
-    }*/
+    }
+
+    private static class FstFilter extends Filter {
+        @Override
+        public String run(String input) {
+            if (input.length() <= 1)
+                return input;
+            Character firstChar = input.charAt(0);
+            return firstChar + this.run(input.replaceAll(firstChar.toString(), ""));
+        }
+    }
+
+    private static class DpcFilter extends Filter {
+        @Override
+        public String run(String input) {
+            if (input.length() < 1)
+                return input;
+            Character firstChar = input.charAt(0);
+            String v = new String(new char[]{firstChar, firstChar});
+            return v + this.run(input.substring(1, input.length()));
+        }
+    }
+
+    private static class CutFilter extends Filter {
+        @Override
+        public String run(String input) {
+            if (input.length() < 10)
+                return input;
+            else
+                return input.substring(0, 10);
+        }
+    }
 
     static class FilterSplitter{
 
         private String filtersLine;
         FilterSplitter(String filtersLine) {
             if (filtersLine == null || filtersLine.isEmpty())
-                throw new IllegalArgumentException("Input line should be empty");
+                throw new IllegalArgumentException("Input line shouldn't be empty");
             this.filtersLine = filtersLine;
         }
 
@@ -76,14 +109,13 @@ public class Task2 {
             String[] filters = filtersLine.split(" ");
             ArrayList<Filter> result = new ArrayList<Filter>();
             for (String filter: filters){
-                //Filters filters = Filters.valueOf()
                 if (filtersMap.containsKey(filter))
                     result.add(filtersMap.get(filter));
                 else
                 if (filter.equals("stop"))
                     return result;
-                else
-                    throw new IllegalArgumentException("Wrong filter: " + filter);
+                //else
+                //    throw new IllegalArgumentException("Wrong filter: " + filter);
             }
 
             return result;
@@ -92,6 +124,7 @@ public class Task2 {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(new InputStreamReader(System.in));
+        while (scanner.hasNext()){
         String filtersLine = scanner.nextLine();
         String input = scanner.nextLine();
         if (input == null)
@@ -104,5 +137,7 @@ public class Task2 {
         }
 
         System.out.println(result);
+        }
     }
+
 }
