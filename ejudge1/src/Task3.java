@@ -1,5 +1,7 @@
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Stack;
@@ -159,16 +161,16 @@ public class Task3 {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(new InputStreamReader(System.in));
-        scanner.useDelimiter("[ \n]");
-        //Stack<String> stack = new Stack<String>();
+        //scanner.useDelimiter("[ \n\r$]");
         while (scanner.hasNext()){
             String input = scanner.next();
+            if (input.length() == 0)
+                continue;
             if (stack.empty()){
                 stack.push(input);
             }
             else {
                 if (isFilter(input)){
-                    //
                     String res = filtersMap.get(input).run(stack.pop());
                     if (res != null && !res.isEmpty()){
                         stack.push(res);
@@ -176,11 +178,22 @@ public class Task3 {
                 }
                 else
                 if (isCommand(input)){
-
+                    commandsMap.get(input).run();
                 }
                 else
                     stack.push(input);
             }
+        }
+
+        ArrayList<String> out = new ArrayList<String>();
+        while (!stack.isEmpty()){
+            //System.out.print(stack.pop() + " ");
+            out.add(stack.pop());
+        }
+
+        ListIterator<String> iterator = out.listIterator(out.size());
+        while (iterator.hasPrevious()){
+            System.out.print(iterator.previous() + " ");
         }
     }
 
