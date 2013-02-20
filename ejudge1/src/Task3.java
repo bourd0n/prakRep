@@ -8,10 +8,6 @@ import java.util.Stack;
 
 public class Task3 {
 
-/*    class NewStack<String> extends Stack<String>{
-
-    }*/
-
     static Map<String, Filter> filtersMap = new HashMap<String, Filter>(){{
         put("eql", new EqualStringFilter());
         put("upc", new UpcaseFilter());
