@@ -109,47 +109,108 @@ public class Task3 {
     }
 
     private static abstract class Command{
-        public abstract void run();
+        public abstract boolean run();
     }
 
     private static class OneCommand extends Command {
         @Override
-        public void run() {
+        public boolean run() {
             String command = stack.pop();
-            String filterName = command.replaceFirst("_", "");
-            String result = filtersMap.get(filterName).run(stack.pop());
-            if (result != null && !result.isEmpty())
-                stack.push(result);
+            String commandName = command.replaceFirst("_", "");
+            if (!stack.empty()){
+                if (isFilter(commandName)) {
+                    String result = filtersMap.get(commandName).run(stack.pop());
+                    if (result != null && !result.isEmpty()){
+                        stack.push(result);
+                        return true;
+                    }
+                    else 
+                        return false;
+                }
+                else if (isCommand(commandName)){
+                    if (!stack.empty())
+                        return commandsMap.get(commandName).run();
+                }
+            }
+            return false;
         }
     }
 
     private static class SprCommand extends Command {
         @Override
-        public void run() {
+        public boolean run() {
             String firstCommand = stack.pop();
             String secondCommand = stack.pop();
-            String firstFilterName = firstCommand.replaceFirst("_", "");
-            String secondFilterName = secondCommand.replaceFirst("_", "");
-            String tmpResult = filtersMap.get(secondFilterName).run(stack.pop());
-            if (tmpResult != null && !tmpResult.isEmpty())
-                stack.push(tmpResult);
-            String result = filtersMap.get(firstFilterName).run(stack.pop());
-            if (result != null && !result.isEmpty())
-                stack.push(result);
+            String firstCommandName = firstCommand.replaceFirst("_", "");
+            String secondCommandName = secondCommand.replaceFirst("_", "");
+            //boolean tmpFlag = false;
+            if (!stack.empty()){
+                if (isFilter(secondCommandName)){
+                    String tmpResult = filtersMap.get(secondCommandName).run(stack.pop());
+                    if (tmpResult != null && !tmpResult.isEmpty()){
+                        stack.push(tmpResult);
+                    //  tmpFlag = true;
+                    }
+                    //else
+                    //  tmpFlag = false;
+                }
+                else if (isCommand(secondCommandName)){
+                    if (!stack.empty())
+                        commandsMap.get(secondCommandName).run();
+                }
+                
+                if (!stack.empty()){
+                    if (isFilter(firstCommandName)){
+                        String result = filtersMap.get(firstCommandName).run(stack.pop());
+                        if (result != null && !result.isEmpty()){
+                            stack.push(result);
+                            return true;
+                        }
+                        else
+                            return false;
+                    }
+                    else if (isCommand(firstCommandName)){
+                        if (!stack.empty())
+                            return commandsMap.get(firstCommandName).run();
+                    }
+                }                           
+            }
+            
+            return false;
         }
     }
 
     private static class UtlCommand extends Command {
         @Override
-        public void run() {
+        public boolean run() {
             String command = stack.pop();
-            String filterName = command.replaceFirst("_", "");
+            String commandName = command.replaceFirst("_", "");
             String result = null;
+            boolean flag = false;
             do {
-                result = filtersMap.get(filterName).run(stack.pop());
-                if (result != null && !result.isEmpty())
-                    stack.push(result);
-            } while (result == null || result.isEmpty());
+                if (!stack.empty()){
+                    if (isFilter(commandName)){
+                        String stackElement = stack.pop();
+                        if (stackElement != null && !stackElement.isEmpty())
+                            result = filtersMap.get(commandName).run(stackElement);
+                        else
+                            return false;
+                        if (result != null && !result.isEmpty()){
+                            stack.push(result);
+                            flag = true;
+                        }
+                        else
+                            flag = false;
+                    }
+                    else if (isCommand(commandName)){
+                        flag = commandsMap.get(commandName).run();
+                    }
+                }
+                else
+                    return false;
+            //} while (result == null || result.isEmpty());
+            } while (!flag && !stack.empty());
+            return flag;
         }
     }
 
@@ -160,33 +221,36 @@ public class Task3 {
         //scanner.useDelimiter("[ \n\r$]");
         while (scanner.hasNext()){
             String input = scanner.next();
-            if (input.length() == 0)
-                continue;
-            if (stack.empty()){
-                stack.push(input);
-            }
-            else {
+            //if (input.length() == 0)
+            //  continue;
+            //if (stack.empty() && !isFilter(input) && !){
+            //    stack.push(input);
+            //}
+            //else {
                 if (isFilter(input)){
-                    String res = filtersMap.get(input).run(stack.pop());
-                    if (res != null && !res.isEmpty()){
-                        stack.push(res);
+                    if (!stack.empty()) {
+                        String stackElement = stack.pop();
+                        String res = filtersMap.get(input).run(stackElement);
+                        if (res != null && !res.isEmpty()){
+                            stack.push(res);
+                        }
                     }
                 }
                 else
                 if (isCommand(input)){
-                    commandsMap.get(input).run();
+                    if (!stack.empty())
+                        commandsMap.get(input).run();
                 }
                 else
                     stack.push(input);
-            }
+            //}
         }
-
+        
         ArrayList<String> out = new ArrayList<String>();
-        while (!stack.isEmpty()){
-            //System.out.print(stack.pop() + " ");
+        while (!stack.empty()){
             out.add(stack.pop());
         }
-
+        
         ListIterator<String> iterator = out.listIterator(out.size());
         while (iterator.hasPrevious()){
             System.out.print(iterator.previous() + " ");
