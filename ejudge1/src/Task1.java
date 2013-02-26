@@ -18,7 +18,7 @@ public class Task1 {
                 min = var;
             var = scanner.nextInt();
         }
-
+	System.out.println("T");
         System.out.println(min);
     }
 }
