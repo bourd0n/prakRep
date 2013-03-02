@@ -6,6 +6,7 @@ class Solver<T extends Vertex>{
     //use reduce
     public boolean solve(OrientedGraph<T> graph, T rootElement, final T searchedElement){
         Reducer<T, Boolean> reducer = new Reducer<T, Boolean>();
+/*
         return reducer.reduce(graph.depthFirstIterator(rootElement), new DoActionHandler<Boolean, T>() {
             @Override
             public Boolean doAction(Boolean element0, T element1) {
@@ -15,9 +16,24 @@ class Solver<T extends Vertex>{
                 return element0;
             }
         }, false);
+*/
+
+        return reducer.reduce2(graph.depthFirstIterator(rootElement), new DoActionHandler<Boolean, T>() {
+            @Override
+            public Boolean doAction(Boolean element0, T element1) {
+                if (!element0) {
+                    element0 = searchedElement.equals(element1);
+                }
+                return element0;
+            }
+        }, false, new CheckActionHandler<Boolean>() {
+                    @Override
+                    public boolean checkAction(Boolean element) {
+                        return element;
+                    }
+                });
     }
 
-    //todo: implement
     public static void main(String[] args) {
         //read graph and use solve method
         Scanner scanner = new Scanner(new InputStreamReader(System.in));
@@ -214,7 +230,7 @@ class Reducer<T, V> {
         V firstElement = element0;
         while (iterator.hasNext()){
             itElement = iterator.next();
-            if (checkActionHandler.checkAction(firstElement)){
+            if (!checkActionHandler.checkAction(firstElement)){
                 firstElement = doActionHandler.doAction(firstElement, itElement);
             }
             else
