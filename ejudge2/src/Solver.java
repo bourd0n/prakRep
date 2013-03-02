@@ -1,5 +1,8 @@
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 
+//todo: implement
 class Solver<T extends Vertex>{
 
     //use reduce
@@ -14,12 +17,56 @@ class Solver<T extends Vertex>{
 }
 
 
-interface Vertex<T>{
+interface Vertex<T extends Vertex>{
+
+    public void addChild(T child);
+
     public Iterable<T> children();
 }
 
 
+class BasicVertex implements Vertex<BasicVertex>{
+
+    private String name;
+
+    private LinkedList<BasicVertex> children;
+
+    BasicVertex(String name){
+        this.name = name;
+    }
+
+    public void addChild(BasicVertex basicVertex){
+        if (children.contains(basicVertex))
+            throw new IllegalArgumentException("Vertex :" + name + " always contains child with name " + basicVertex.name);
+        children.add(basicVertex);
+    }
+
+    @Override
+    public Iterable<BasicVertex> children() {
+        return children;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BasicVertex that = (BasicVertex) o;
+
+        if (!name.equals(that.name)) return false;
+
+        return true;
+    }
+
+}
+
+//todo: implement
 class DepthFirstIterator<T extends Vertex> implements Iterator<T>{
+
+    private T root;
+    public DepthFirstIterator(T root) {
+        this.root = root;
+    }
 
     @Override
     public boolean hasNext() {
@@ -36,11 +83,26 @@ class DepthFirstIterator<T extends Vertex> implements Iterator<T>{
     }
 }
 
+//todo: implement
 class OrientedGraph<T extends Vertex> {
 
-    public DepthFirstIterator<T> depthFirstIterator(T vertex){
+    private ArrayList<T> graph;
 
-        return null;
+    public void add(T beginElement, T endElement){
+        beginElement.addChild(endElement);
+        if (!graph.contains(beginElement)){
+            graph.add(beginElement);
+        }
+
+        if (!graph.contains(endElement)){
+            graph.add(endElement);
+        }
+    }
+
+    public DepthFirstIterator<T> depthFirstIterator(T vertex){
+        if (!graph.contains(vertex))
+            throw new IllegalArgumentException("No such vertex in graph : " + vertex);
+        return new DepthFirstIterator<T>(graph.get(graph.indexOf(vertex)));
     }
 }
 
@@ -52,6 +114,7 @@ interface CheckActionHandler<T>{
     public boolean checkAction(T element);
 }
 
+//done
 class Reducer<T, V> {
 
     public V reduce (Iterator<T> iterator, DoActionHandler<V, T> doActionHandler, V element0){
