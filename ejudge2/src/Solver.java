@@ -1,18 +1,53 @@
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.io.InputStreamReader;
+import java.util.*;
 
-//todo: implement
 class Solver<T extends Vertex>{
 
     //use reduce
-    public boolean solve(OrientedGraph<T> graph, T rootElement, T searchedElement){
-
-        return false;
+    public boolean solve(OrientedGraph<T> graph, T rootElement, final T searchedElement){
+        Reducer<T, Boolean> reducer = new Reducer<T, Boolean>();
+        return reducer.reduce(graph.depthFirstIterator(rootElement), new DoActionHandler<Boolean, T>() {
+            @Override
+            public Boolean doAction(Boolean element0, T element1) {
+                if (!element0){
+                 element0 = searchedElement.equals(element1);
+                }
+                return element0;
+            }
+        }, false);
     }
 
+    //todo: implement
     public static void main(String[] args) {
         //read graph and use solve method
+        Scanner scanner = new Scanner(new InputStreamReader(System.in));
+        OrientedGraph<BasicVertex> graph = new OrientedGraph<BasicVertex>();
+        int size = scanner.nextInt();
+        scanner.nextLine();
+        for (int i = 0; i < size; i ++){
+            String line = scanner.nextLine();
+            String[] lines = line.split(" ");
+            BasicVertex bv1 = new BasicVertex(lines[0]);
+            BasicVertex bv2 = new BasicVertex(lines[1]);
+            graph.add(bv1, bv2);
+            //graph.add(new BasicVertex(lines[0]), new BasicVertex(lines[1]));
+        }
+
+        Solver<BasicVertex> solver = new Solver<BasicVertex>();
+        while (scanner.hasNext()){
+            String[] line = scanner.nextLine().split(" ");
+            BasicVertex from = new BasicVertex(line[0]);
+            BasicVertex to = new BasicVertex(line[1]);
+            if (!graph.contains(from) || !graph.contains(to))
+                System.out.println("?");
+            else{
+                boolean finded = solver.solve(graph, from, to);
+                if (finded)
+                    System.out.println("+");
+                else
+                    System.out.println("-");
+            }
+        }
     }
 }
 
@@ -33,6 +68,7 @@ class BasicVertex implements Vertex<BasicVertex>{
 
     BasicVertex(String name){
         this.name = name;
+        children = new LinkedList<BasicVertex>();
     }
 
     public void addChild(BasicVertex basicVertex){
@@ -60,43 +96,73 @@ class BasicVertex implements Vertex<BasicVertex>{
 
 }
 
-//todo: implement
+//done
 class DepthFirstIterator<T extends Vertex> implements Iterator<T>{
 
-    private T root;
+    //private T root;
+    private LinkedList<T> list;
     public DepthFirstIterator(T root) {
-        this.root = root;
+        //this.root = root;
+        list = new LinkedList<T>();
+        list.add(root);
     }
 
     @Override
     public boolean hasNext() {
-        return false;
+        return !list.isEmpty();
     }
 
     @Override
     public T next() {
-        return null;
+        if (list.isEmpty())
+            throw new NoSuchElementException();
+        //T nextElement = list.getFirst();
+        T nextElement = list.pop();
+        Iterable<T> nextChildren = nextElement.children();
+        if (nextChildren != null){
+            for (T nextChild : nextChildren) {
+                list.add(nextChild);
+            }
+        }
+        return nextElement;
     }
 
     @Override
     public void remove() {
+        throw new UnsupportedOperationException();
     }
 }
 
-//todo: implement
+//done
 class OrientedGraph<T extends Vertex> {
 
     private ArrayList<T> graph;
 
+    OrientedGraph() {
+        this.graph = new ArrayList<T>();
+    }
+
     public void add(T beginElement, T endElement){
-        beginElement.addChild(endElement);
-        if (!graph.contains(beginElement)){
-            graph.add(beginElement);
+        T beginElementGraph = beginElement;
+        T endElementGraph = endElement;
+        if (graph.contains(beginElement))
+            beginElementGraph = graph.get(graph.indexOf(beginElement));
+        if (graph.contains(endElement))
+            endElementGraph = graph.get(graph.indexOf(endElement));
+
+        beginElementGraph.addChild(endElementGraph);
+
+        if (!graph.contains(beginElementGraph)){
+            graph.add(beginElementGraph);
         }
 
-        if (!graph.contains(endElement)){
-            graph.add(endElement);
+        if (!graph.contains(endElementGraph)){
+            graph.add(endElementGraph);
         }
+    }
+
+    public boolean contains(T element){
+        return graph.contains(element);
     }
 
     public DepthFirstIterator<T> depthFirstIterator(T vertex){
@@ -107,7 +173,23 @@ class OrientedGraph<T extends Vertex> {
 }
 
 interface DoActionHandler<V, T>{
-    public V doAction(V element0, T elemet1);
+    public V doAction(V element0, T element1);
+}
+
+class DepthSearchDoActionHandler<V, T> implements DoActionHandler<V, T>{
+
+    private boolean finded;
+
+    DepthSearchDoActionHandler() {
+        this.finded = false;
+    }
+
+    @Override
+    public V doAction(V element0, T element1) {
+        if (element0.equals(element1))
+            finded = true;
+        return element0;
+    }
 }
 
 interface CheckActionHandler<T>{
