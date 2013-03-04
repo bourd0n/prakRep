@@ -19,14 +19,14 @@ class Solver<T extends Vertex>{
 */
 
         return reducer.reduce2(graph.depthFirstIterator(rootElement), new DoActionHandler<Boolean, T>() {
-            @Override
-            public Boolean doAction(Boolean element0, T element1) {
-                if (!element0) {
-                    element0 = searchedElement.equals(element1);
-                }
-                return element0;
-            }
-        }, false, new CheckActionHandler<Boolean>() {
+                    @Override
+                    public Boolean doAction(Boolean element0, T element1) {
+                        if (!element0) {
+                            element0 = searchedElement.equals(element1);
+                        }
+                        return element0;
+                    }
+                }, false, new CheckActionHandler<Boolean>() {
                     @Override
                     public boolean checkAction(Boolean element) {
                         return element;
@@ -73,6 +73,12 @@ interface Vertex<T extends Vertex>{
     public void addChild(T child);
 
     public Iterable<T> children();
+
+    public boolean isWasVisited();
+
+    public void setWasVisited(boolean wasVisited);
+
+    public String getName();
 }
 
 
@@ -82,14 +88,31 @@ class BasicVertex implements Vertex<BasicVertex>{
 
     private LinkedList<BasicVertex> children;
 
+    private boolean wasVisited = false;
+
     BasicVertex(String name){
         this.name = name;
         children = new LinkedList<BasicVertex>();
+        wasVisited = false;
+    }
+
+    public boolean isWasVisited() {
+        return wasVisited;
+    }
+
+    public void setWasVisited(boolean wasVisited) {
+        this.wasVisited = wasVisited;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     public void addChild(BasicVertex basicVertex){
         if (children.contains(basicVertex))
-            throw new IllegalArgumentException("Vertex :" + name + " always contains child with name " + basicVertex.name);
+            //throw new IllegalArgumentException("Vertex :" + name + " always contains child with name " + basicVertex.name);
+            return;
         children.add(basicVertex);
     }
 
@@ -134,10 +157,12 @@ class DepthFirstIterator<T extends Vertex> implements Iterator<T>{
             throw new NoSuchElementException();
         //T nextElement = list.getFirst();
         T nextElement = list.pop();
+        nextElement.setWasVisited(true);
         Iterable<T> nextChildren = nextElement.children();
         if (nextChildren != null){
             for (T nextChild : nextChildren) {
-                list.add(nextChild);
+                if (!nextChild.isWasVisited())
+                    list.add(nextChild);
             }
         }
         return nextElement;
@@ -152,39 +177,70 @@ class DepthFirstIterator<T extends Vertex> implements Iterator<T>{
 //done
 class OrientedGraph<T extends Vertex> {
 
-    private ArrayList<T> graph;
+    //private ArrayList<T> graph;
+    private HashMap<String, T> graph;
 
     OrientedGraph() {
-        this.graph = new ArrayList<T>();
+        //this.graph = new ArrayList<T>();
+        this.graph = new HashMap<String, T>();
     }
 
     public void add(T beginElement, T endElement){
-        T beginElementGraph = beginElement;
-        T endElementGraph = endElement;
-        if (graph.contains(beginElement))
+        String beginElementName = beginElement.getName();
+        String endElementName = endElement.getName();
+        T beginElementGraph = graph.get(beginElementName);//beginElement;
+        T endElementGraph = graph.get(endElementName);//endElement;
+
+        //boolean isBeginElementContains = false;
+        //boolean isEndElementContains = false;
+        if (beginElementGraph == null){
+            graph.put(beginElementName, beginElement);
+            beginElementGraph = beginElement;
+        }
+        if (endElementGraph == null){
+            graph.put(endElementName, endElement);
+            endElementGraph = endElement;
+        }
+        /*if (graph.contains(beginElement)){
+            isBeginElementContains = true;
             beginElementGraph = graph.get(graph.indexOf(beginElement));
-        if (graph.contains(endElement))
+        }
+
+        if (graph.contains(endElement)){
+            isEndElementContains = true;
             endElementGraph = graph.get(graph.indexOf(endElement));
+        }*/
+
+
 
         beginElementGraph.addChild(endElementGraph);
 
-        if (!graph.contains(beginElementGraph)){
+
+        /*if (!isBeginElementContains){
             graph.add(beginElementGraph);
         }
 
-        if (!graph.contains(endElementGraph)){
+        if (!isEndElementContains){
             graph.add(endElementGraph);
-        }
+        }*/
     }
 
     public boolean contains(T element){
-        return graph.contains(element);
+        //return graph.contains(element);
+        return graph.get(element.getName()) != null;
     }
 
     public DepthFirstIterator<T> depthFirstIterator(T vertex){
-        if (!graph.contains(vertex))
-            throw new IllegalArgumentException("No such vertex in graph : " + vertex);
-        return new DepthFirstIterator<T>(graph.get(graph.indexOf(vertex)));
+        //if (!graph.contains(vertex))
+        //    throw new IllegalArgumentException("No such vertex in graph : " + vertex);
+        //for (T element : graph){
+        //   element.setWasVisited(false);
+        //}
+        for (T element : graph.values()){
+            element.setWasVisited(false);
+        }
+        //return new DepthFirstIterator<T>(graph.get(graph.indexOf(vertex)));
+        return new DepthFirstIterator<T>(graph.get(vertex.getName()));
     }
 }
 
@@ -192,21 +248,6 @@ interface DoActionHandler<V, T>{
     public V doAction(V element0, T element1);
 }
 
-class DepthSearchDoActionHandler<V, T> implements DoActionHandler<V, T>{
-
-    private boolean finded;
-
-    DepthSearchDoActionHandler() {
-        this.finded = false;
-    }
-
-    @Override
-    public V doAction(V element0, T element1) {
-        if (element0.equals(element1))
-            finded = true;
-        return element0;
-    }
-}
 
 interface CheckActionHandler<T>{
     public boolean checkAction(T element);
