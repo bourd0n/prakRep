@@ -1,3 +1,4 @@
+import org.apache.commons.codec.language.DoubleMetaphone;
 import pt.tumba.spell.Aspell;
 
 import java.io.File;
@@ -5,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,6 +92,7 @@ public class Tenor {
         return possibleTransformations;
     }
 
+    //todo: think about punctuation
     public static void main(String[] args) {
         String twit = null;
         try {
@@ -120,16 +123,26 @@ public class Tenor {
             } else {
                 //OOV
                 Collection<String> possibleVariants = new ArrayList<String>();
-                for (String s : aspellVariants ){
+                for (String s : aspellVariants) {
                     possibleVariants.add(s);
                 }
 
                 //Common transformations like repeated symbols and numbers
                 possibleVariants.addAll(tenor.commonTransform(word));
 
+                DoubleMetaphone dm = new DoubleMetaphone();
+                String sourceDM = dm.doubleMetaphone(word);
 
-                for (String st : aspellVariants) {
-                    System.out.println(st);
+
+                Iterator<String> it = possibleVariants.iterator();
+
+                while (it.hasNext()) {
+                    if (!dm.isDoubleMetaphoneEqual(it.next(), sourceDM))
+                        it.remove();
+                }
+
+                for (String st : possibleVariants) {
+                    System.out.println(st + " DoubleMetaphone " + dm.doubleMetaphone(st));
                 }
             }
         }
