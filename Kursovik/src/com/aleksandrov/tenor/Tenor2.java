@@ -97,6 +97,8 @@ public class Tenor2 {
         return possibleTransformations;
     }
 
+    public static final double LEXICAL_SIMILARITY_LIMIT = 0.60;
+
     //todo: think about punctuation
     public static void main(String[] args) {
         String twit = null;
@@ -146,14 +148,26 @@ public class Tenor2 {
                 }
 
                 RatcliffObershelpMetric rm = RatcliffObershelpMetric.apply();
-
+                Predef.DummyImplicit di = new Predef.DummyImplicit();
                 //System.out.println(rm.compare("Pennsylvania".toCharArray(), "Pencilvaneya".toCharArray()));
                 //System.out.println(rm.compare("Pencilvaneya", "Pennsylvania", new Predef.DummyImplicit()));
-                Option<Object> some = (Option<Object>) rm.compare("Pencilvaneya", "Pennsylvania", new Predef.DummyImplicit());
-                System.out.println(some.get());
-                    for (String st : possibleVariants) {
-                    System.out.println(st + " DoubleMetaphone " + dm.doubleMetaphone(st));
+                //Option<Object> some = (Option<Object>) rm.compare("Pencilvaneya", "Pennsylvania", new Predef.DummyImplicit());
+                //System.out.println(some.get());
+                //    for (String st : possibleVariants) {
+                //        Option<Object> some = rm.compare(word, st, di);
+                //
+                //        System.out.println(st + " DoubleMetaphone " + dm.doubleMetaphone(st) + " similarity " + some.get());
+                //}
+
+                it = possibleVariants.iterator();
+
+                while (it.hasNext()) {
+                    Option<Object> some = rm.compare(word, it.next(), di);
+                    if ((Double) some.get() < LEXICAL_SIMILARITY_LIMIT)
+                        it.remove();
                 }
+
+
             }
         }
 
