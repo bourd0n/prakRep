@@ -1,49 +1,59 @@
 import java.io.*;
+import java.util.Arrays;
 import java.util.Scanner;
 
-public class Task1 {
+public class Task1Edit {
 
     public static void main(String[] args) {
         InputStreamReader isr =  new InputStreamReader(System.in);
-        //CharArrayReader cr = new CharArrayReader() ;
         Scanner scanner = new Scanner(isr);
         String in = "";
         while (scanner.hasNextLine())
         {
             in += scanner.nextLine();
-            //char[] chars = scanner.next().toCharArray();
-/*        SemParser sp = new SemParser(chars);
-        sp.analyze();*/
         }
         SemParser sp = new SemParser(in);
 
         try {
             sp.analyze();
         } catch (IllegalSymbolException e) {
-            System.out.println("incorrect " + e.getMessage());
+            System.out.println("incorrect");
         }
     }
 
 }
 
-enum Lexem {
+enum LexemType {
     LEFT_P, //<
-    LEFT_S, ID, NUM, QUOTE, ARROW, ST_LN, DOT, COLON, RIGHT_P, END, STRING, ///
-
+    LEFT_S, ID, NUM, ARROW, ST_LN, DOT, COLON, RIGHT_P, END, STRING, ///
 }
+
+class Lexem {
+    private LexemType type;
+    private String value;
+
+    Lexem(LexemType type, String value) {
+        this.type = type;
+        this.value = value;
+    }
+
+    public Lexem(LexemType type) {
+        this.type = type;
+    }
+
+    public LexemType getType() {
+        return type;
+    }
+
+    public String getValue() {
+        return value;
+    }
+}
+
 class LexScanner {
-    //private Scanner scanner;
     private Reader reader;
 
     public LexScanner(final String s) {
-        /*reader = new InputStreamReader(new InputStream() {
-            private int i = -1;
-            @Override
-            public int read() throws IOException {
-                i++;
-                return s.charAt(i);
-            }
-        });*/
         reader = new StringReader(s);
 
         CS = state.H;
@@ -106,7 +116,13 @@ class LexScanner {
         }
     }
 
-
+    private String getBufString(){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < buf_top; i++){
+            sb.append(buf[i]);
+        }
+        return sb.toString();
+    }
 
     public Lexem getLexem() throws IllegalSymbolException {
         int d, j;
@@ -117,7 +133,7 @@ class LexScanner {
             switch (CS){
                 case H:
                     if (c == null)
-                        return Lexem.END;
+                        return new Lexem(LexemType.END);
                     if ( c == ' ' || c == '\n' || c == '\r' || c == '\t')
                         gc();
                     else if (Character.isAlphabetic(c))
@@ -130,30 +146,31 @@ class LexScanner {
                     else if (Character.isDigit(c))
                     {
                         d = c - '0';
+                        add();
                         gc();
                         CS = state.NUMB;
                     }
                     else if (c == '<')
                     {
                         gc();
-                        return Lexem.LEFT_P;
+                        return new Lexem (LexemType.LEFT_P, "<");
                     }
                     else if (c == '>')
                     {
                         gc();
-                        return Lexem.RIGHT_P;
+                        return new Lexem(LexemType.RIGHT_P, ">");
                     }
                     else if ( c == '/')
                     {
                         gc();
-                        return Lexem.LEFT_S;
+                        return new Lexem(LexemType.LEFT_S, "/");
                     }
                     else if (c == '\"')
                     {
                         clear();
+                        add();
                         gc();
                         CS = state.STRING;
-                        //return Lexem.QUOTE;
                     }
                     else if (c == '-')
                     {
@@ -165,21 +182,21 @@ class LexScanner {
                     else if (c == '|')
                     {
                         gc();
-                        return Lexem.ST_LN;
+                        return new Lexem(LexemType.ST_LN, "|");
                     }
                     else if (c == '.')
                     {
                         gc();
-                        return Lexem.DOT;
+                        return new Lexem(LexemType.DOT, ".");
                     }
                     else if (c == ':')
                     {
                         gc();
-                        return Lexem.COLON;
+                        return new Lexem(LexemType.COLON, ":");
                     }
                     else if (c == null)
                     {
-                        return Lexem.END;
+                        return new Lexem(LexemType.END);
                     }
                     else
                         CS = state.DELIM;
@@ -187,10 +204,10 @@ class LexScanner {
                 case IDENT:
                     if (c == null){
                         if (buf_top == 0)
-                            return Lexem.END;
+                            return new Lexem(LexemType.END);
                         else {
                             gc();
-                            return Lexem.ID;
+                            return new Lexem(LexemType.ID, getBufString());
                         }
                     }
                     else if (Character.isAlphabetic(c) || Character.isDigit(c)){
@@ -198,30 +215,32 @@ class LexScanner {
                         gc();
                     }
                     else
-                        return Lexem.ID;
+                        return new Lexem(LexemType.ID, getBufString());;
                     break;
                 case NUMB:
                     if ( c == null ){
                         if (buf_top == 0)
-                            return Lexem.END;
+                            return new Lexem(LexemType.END);
                         else {
                             gc();
-                            return Lexem.NUM;
+                            return new Lexem(LexemType.NUM, getBufString());
                         }
                     }
                     if (Character.isDigit(c))
                     {
+                        add();
                         gc();
                     }
                     else
-                        return Lexem.NUM;
+                        return new Lexem(LexemType.NUM, getBufString());
                     break;
                 case STRING:
                     if (c == null)
                         throw new IllegalSymbolException("expected string");
                     else if (c == '\"'){
+                        add();
                         gc();
-                        return Lexem.STRING;
+                        return new Lexem(LexemType.STRING, getBufString());
                     }
                     else {
                         add();
@@ -230,15 +249,16 @@ class LexScanner {
                     break;
                 case HYPHEN:
                     if (c == null){
-                        return Lexem.END;
+                        return new Lexem(LexemType.END);
                     }
                     else if (c == '>'){
                         gc();
-                        return Lexem.ARROW;
+                        return new Lexem(LexemType.ARROW, "->");
                     }
                     else
                     if (Character.isDigit(c)){
                         //d =
+                        add();
                         gc();
                         CS = state.NUMB;
                     }
@@ -247,7 +267,7 @@ class LexScanner {
                     break;
                 case DELIM:
                     clear();
-                    add();
+                    //add();
                     break;
             }
         } while (true);
@@ -259,9 +279,11 @@ class SemParser {
     private LexScanner scanner ;//= new LexScanner();
     private Lexem curLex;
     private int spaceCount = 0;
+    private StringBuilder sb;
 
     public SemParser(String s) {
         scanner = new LexScanner(s);
+        sb = new StringBuilder();
     }
 
     public SemParser(InputStreamReader isr) {
@@ -280,15 +302,16 @@ class SemParser {
     public void analyze() throws IllegalSymbolException {
         gl();
         P();
-        if (curLex != Lexem.END) {
+        if (curLex.getType() != LexemType.END) {
             throw new IllegalSymbolException("P: Expected end but was " + curLex);
         }
-        System.out.println("OK");
+        System.out.println(sb.toString());
     }
 
     private void P() throws IllegalSymbolException {
         step();
-        while (curLex == Lexem.ARROW){
+        while (curLex.getType() == LexemType.ARROW){
+            sb.append(" ->\n");
             gl();
             step();
         }
@@ -296,30 +319,51 @@ class SemParser {
     }
 
     private void step() throws IllegalSymbolException {
-        if (curLex == Lexem.ID || curLex == Lexem.STRING || curLex == Lexem.NUM){
+        if (curLex.getType() == LexemType.ID || curLex.getType() == LexemType.STRING || curLex.getType() == LexemType.NUM){
+            append(curLex.getValue());
             gl();
             call();
         }
-        else if (curLex == Lexem.LEFT_S){
+        else if (curLex.getType() == LexemType.LEFT_S){
+            append(curLex.getValue() + "\n");
+            spaceCount += 4;
             gl();
             protectedProg();
         }
-        else if (curLex == Lexem.LEFT_P){
+        else if (curLex.getType() == LexemType.LEFT_P){
+            append(curLex.getValue() + "\n");
+            spaceCount += 4;
             gl();
             methodDecl();
+            sb.append("\n");
+            append("");
         }
         else
             throw new IllegalSymbolException("step: Expected call, protected program or method declaration but was: " + curLex);
 
     }
 
+    private void append(String s) {
+        for (int i = 0; i < spaceCount; i++){
+            sb.append(" ");
+        }
+        if (s != null && !s.isEmpty())
+            sb.append(s);
+    }
+
     private void methodDecl() throws IllegalSymbolException {
         P();
-        if (curLex == Lexem.RIGHT_P){
+        //spaceCount -= 4;
+        sb.append("\n");
+        if (curLex.getType() == LexemType.RIGHT_P){
+            spaceCount -= 4;
+            append(curLex.getValue() + " ");
             gl();
-            if (curLex == Lexem.ARROW){
+            if (curLex.getType() == LexemType.ARROW){
+                sb.append(curLex.getValue() + " ");
                 gl();
-                if (curLex == Lexem.ID){
+                if (curLex.getType() == LexemType.ID){
+                    sb.append(curLex.getValue());
                     gl();
                     call();
                 }
@@ -335,14 +379,21 @@ class SemParser {
 
     private void protectedProg() throws IllegalSymbolException {
         P();
-        if (curLex == Lexem.ST_LN){
+        if (curLex.getType() == LexemType.ST_LN){
+            sb.append("\n");
+            spaceCount -= 4;
+            append(curLex.getValue() + "\n");
+            spaceCount += 4;
             gl();
             P();
         }
         else
             throw new IllegalSymbolException("protectedProg : expected | " + curLex);
 
-        if (curLex == Lexem.LEFT_S){
+        if (curLex.getType() == LexemType.LEFT_S){
+            spaceCount -= 4;
+            sb.append("\n");
+            append(curLex.getValue());
             gl();
         }
         else
@@ -350,12 +401,15 @@ class SemParser {
     }
 
     private void call() throws IllegalSymbolException {
-        if (curLex == Lexem.DOT)
+        if (curLex.getType() == LexemType.DOT)
         {
+            sb.append(curLex.getValue());
             gl();
-            if (curLex == Lexem.ID){
+            if (curLex.getType() == LexemType.ID){
+                sb.append(curLex.getValue());
                 gl();
-                if (curLex == Lexem.COLON){
+                if (curLex.getType() == LexemType.COLON){
+                    sb.append(curLex.getValue());
                     gl();
                     //constant();
                     object();
@@ -370,7 +424,8 @@ class SemParser {
     }
 
     private void object() throws IllegalSymbolException {
-        if (curLex == Lexem.ID){
+        if (curLex.getType() == LexemType.ID){
+            sb.append(curLex.getValue());
             gl();
         }
         else {
@@ -379,13 +434,13 @@ class SemParser {
     }
 
     private void constant() throws IllegalSymbolException {
-        if (curLex == Lexem.NUM){
+        if (curLex.getType() == LexemType.NUM){
+            sb.append(curLex.getValue());
             gl();
-
         }
-        else if (curLex == Lexem.STRING){
+        else if (curLex.getType() == LexemType.STRING){
+            sb.append(curLex.getValue());
             gl();
-
         }
     }
 
