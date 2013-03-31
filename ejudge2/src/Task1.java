@@ -9,7 +9,8 @@ public class Task1 {
         ArrayList<Integer> arrayList = new ArrayList<Integer>();
         String[] firstStrings = line.split(" ");
         for (String str : firstStrings){
-            arrayList.add(new Integer(str));
+            if (str != null && !str.isEmpty())
+                arrayList.add(new Integer(str));
         }
 
         return arrayList;
