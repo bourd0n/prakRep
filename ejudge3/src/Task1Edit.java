@@ -266,9 +266,7 @@ class LexScanner {
                         throw new IllegalSymbolException("Expected > or number");
                     break;
                 case DELIM:
-                    clear();
-                    //add();
-                    break;
+                    throw new IllegalSymbolException("Wrong symbol");
             }
         } while (true);
     }
@@ -336,7 +334,6 @@ class SemParser {
             gl();
             methodDecl();
             sb.append("\n");
-            append("");
         }
         else
             throw new IllegalSymbolException("step: Expected call, protected program or method declaration but was: " + curLex);
