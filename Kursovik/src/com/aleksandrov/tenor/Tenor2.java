@@ -6,13 +6,8 @@ import pt.tumba.spell.Aspell;
 import scala.Option;
 import scala.Predef;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -120,13 +115,15 @@ public class Tenor2 {
 
         Tenor2 tenor = new Tenor2();
 
+        int i = 0;
         for (String word : twitWords) {
             StringBuilder sb = new StringBuilder();
             String[] aspellVariants = aspell.find(word);
 
             if (aspellVariants.length == 1 && aspellVariants[0].equals(word)) {
                 //ok - not OOV
-                sb.append(word + " ");
+                //sb.append(word + " ");
+                i++;
             } else {
                 //OOV
                 Collection<String> possibleVariants = new ArrayList<String>();
@@ -166,8 +163,45 @@ public class Tenor2 {
                     if ((Double) some.get() < LEXICAL_SIMILARITY_LIMIT)
                         it.remove();
                 }
+                StringBuilder sb1 = new StringBuilder();
+                it = possibleVariants.iterator();
+                while (it.hasNext()) {
+                    System.out.println(it.next());
+                    sb1.append(it.next()).append(" ");
 
+                }
+                System.out.println("-------");
+                System.out.println(twit);
+                System.out.println(sb1.toString());
+                System.out.println("--------");
+//                String[] strings = new String[possibleVariants.size()];
+//                strings = possibleVariants.toArray(strings);
+//                System.out.println(Arrays.toString(twitWords));
+//                System.out.println(Arrays.toString(strings));
+                try {
+                    String[] strings = new String[possibleVariants.size()];
+                    strings = possibleVariants.toArray(strings);
+                    //System.out.println(twitWords.toString());
+                    //System.out.println(strings.toString());
+                    ProcessBuilder builder = new ProcessBuilder("python", "/home/samsung/programs/prak/prakRep/Kursovik/src/test.py",
+                    //        twit, sb1.toString());
+                            twit, sb1.toString(), Integer.toString(i));
+                    builder.redirectErrorStream(true);
+                    Process p = builder.start();
+                    InputStream stdout = p.getInputStream();
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
 
+                    String line;
+                    String line2 = "";
+                    while ((line = reader.readLine()) != null) {
+                        System.out.println("Stdout: " + line);
+                        line2 = line;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                i++;
             }
         }
 
