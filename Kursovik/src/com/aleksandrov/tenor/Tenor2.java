@@ -96,6 +96,8 @@ public class Tenor2 {
 
     //todo: think about punctuation
     public static void main(String[] args) {
+        Date d1 = new Date();
+        System.out.println(d1);
         String twit = null;
         try {
             Scanner scanner = new Scanner(new File("/home/samsung/programs/prak/prakRep/Kursovik/src/test"));
@@ -116,13 +118,14 @@ public class Tenor2 {
         Tenor2 tenor = new Tenor2();
 
         int i = 0;
-        for (String word : twitWords) {
+        //for (String word : twitWords) {
+        for (int j = 0; j < twitWords.length; j++){
             StringBuilder sb = new StringBuilder();
-            String[] aspellVariants = aspell.find(word);
+            String[] aspellVariants = aspell.find(twitWords[j]);
 
-            if (aspellVariants.length == 1 && aspellVariants[0].equals(word)) {
+            if (aspellVariants.length == 1 && aspellVariants[0].equals(twitWords[j])) {
                 //ok - not OOV
-                //sb.append(word + " ");
+                //sb.append(twitWords[j] + " ");
                 i++;
             } else {
                 //OOV
@@ -132,10 +135,10 @@ public class Tenor2 {
                 }
 
                 //Common transformations like repeated symbols and numbers
-                possibleVariants.addAll(tenor.commonTransform(word));
+                possibleVariants.addAll(tenor.commonTransform(twitWords[j]));
 
                 DoubleMetaphone dm = new DoubleMetaphone();
-                String sourceDM = dm.doubleMetaphone(word);
+                String sourceDM = dm.doubleMetaphone(twitWords[j]);
 
                 Iterator<String> it = possibleVariants.iterator();
 
@@ -151,7 +154,7 @@ public class Tenor2 {
                 //Option<Object> some = (Option<Object>) rm.compare("Pencilvaneya", "Pennsylvania", new Predef.DummyImplicit());
                 //System.out.println(some.get());
                 //    for (String st : possibleVariants) {
-                //        Option<Object> some = rm.compare(word, st, di);
+                //        Option<Object> some = rm.compare(twitWords[j], st, di);
                 //
                 //        System.out.println(st + " DoubleMetaphone " + dm.doubleMetaphone(st) + " similarity " + some.get());
                 //}
@@ -159,32 +162,27 @@ public class Tenor2 {
                 it = possibleVariants.iterator();
 
                 while (it.hasNext()) {
-                    Option<Object> some = rm.compare(word, it.next(), di);
+                    Option<Object> some = rm.compare(twitWords[j], it.next(), di);
                     if ((Double) some.get() < LEXICAL_SIMILARITY_LIMIT)
                         it.remove();
                 }
                 StringBuilder sb1 = new StringBuilder();
                 it = possibleVariants.iterator();
                 while (it.hasNext()) {
-                    System.out.println(it.next());
-                    sb1.append(it.next()).append(" ");
+                    String s = it.next();
+                    System.out.println(s);
+                    sb1.append(s).append(" ");
 
                 }
                 System.out.println("-------");
                 System.out.println(twit);
                 System.out.println(sb1.toString());
                 System.out.println("--------");
-//                String[] strings = new String[possibleVariants.size()];
-//                strings = possibleVariants.toArray(strings);
-//                System.out.println(Arrays.toString(twitWords));
-//                System.out.println(Arrays.toString(strings));
+
                 try {
                     String[] strings = new String[possibleVariants.size()];
                     strings = possibleVariants.toArray(strings);
-                    //System.out.println(twitWords.toString());
-                    //System.out.println(strings.toString());
                     ProcessBuilder builder = new ProcessBuilder("python", "/home/samsung/programs/prak/prakRep/Kursovik/src/test.py",
-                    //        twit, sb1.toString());
                             twit, sb1.toString(), Integer.toString(i));
                     builder.redirectErrorStream(true);
                     Process p = builder.start();
@@ -197,6 +195,8 @@ public class Tenor2 {
                         System.out.println("Stdout: " + line);
                         line2 = line;
                     }
+                    System.out.println("line2 " + line2);
+                    twitWords[j] = line2;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -204,6 +204,9 @@ public class Tenor2 {
                 i++;
             }
         }
-
+        Date d = new Date();
+        System.out.println("!@!@#!@");
+        System.out.println(d);
+        System.out.println(Arrays.toString(twitWords));
     }
 }
