@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Tenor2 {
+public class Tenor3 {
 
     public Collection<String> commonTransform(String word) {
         Collection<String> possibleTransformations = new ArrayList<String>();
@@ -24,7 +24,7 @@ public class Tenor2 {
             possibleTransformations.add(res);
             res = word.replaceFirst("(\\w)\\1+", m.group(1));
             possibleTransformations.add(res);
-            System.out.println("After delete repeated 2" + res);
+            System.out.println("After delete repeated 2 " + res);
         }
 
         //replace numbers
@@ -32,14 +32,14 @@ public class Tenor2 {
         m = p.matcher(word);
 
         while (m.find()) {
-            String finded = m.group(1);
+            String finded = m.group();
             Integer num = new Integer(finded);
             int pos = word.indexOf(finded);
             //todo: case of several same digits
             //todo: 2 - to, 4 - for
             if (!finded.equals(word)) {
                 //not single number
-                //todo: think about if in end, begin or midle of the word
+                //todo: think about if in end, begin or middle of the word
                 //todo: think about change of replaceFirst (repeat number)
                 switch (num) {
                     case 0:
@@ -115,66 +115,83 @@ public class Tenor2 {
             e.printStackTrace();
         }
 
-        Tenor2 tenor = new Tenor2();
+        Tenor3 tenor = new Tenor3();
 
         int i = 0;
+        Collection<String> posibleVars = new ArrayList<String>();
+
         //for (String word : twitWords) {
-        for (int j = 0; j < twitWords.length; j++){
+        for (int j = 0; j < twitWords.length; j++) {
             StringBuilder sb = new StringBuilder();
             String[] aspellVariants = aspell.find(twitWords[j]);
 
-            if (aspellVariants.length == 1 && aspellVariants[0].equals(twitWords[j])) {
+            if (aspellVariants.length == 1 && aspellVariants[0].equals(twitWords[j])
+                    && !twitWords[j].matches(".*\\d.*")) {
                 //ok - not OOV
                 //sb.append(twitWords[j] + " ");
+                System.out.println("ok");
+                posibleVars.add(twitWords[j]);
                 i++;
             } else {
                 //OOV
                 Collection<String> possibleVariants = new ArrayList<String>();
                 for (String s : aspellVariants) {
+                    System.out.println("1 " + s);
                     possibleVariants.add(s);
                 }
 
                 //Common transformations like repeated symbols and numbers
                 possibleVariants.addAll(tenor.commonTransform(twitWords[j]));
 
-                DoubleMetaphone dm = new DoubleMetaphone();
-                String sourceDM = dm.doubleMetaphone(twitWords[j]);
+                if (!twitWords[j].matches(".*\\d.*")) {
+                    DoubleMetaphone dm = new DoubleMetaphone();
+                    String sourceDM = dm.doubleMetaphone(twitWords[j]);
 
-                Iterator<String> it = possibleVariants.iterator();
 
-                while (it.hasNext()) {
-                    if (!dm.isDoubleMetaphoneEqual(it.next(), sourceDM))
-                        it.remove();
+                    Iterator<String> it = possibleVariants.iterator();
+
+                    while (it.hasNext()) {
+                        String s = it.next();
+                        System.out.println(s);
+//                        if (!dm.isDoubleMetaphoneEqual(s, sourceDM))
+                        if (!dm.isDoubleMetaphoneEqual(s, twitWords[j]))
+                            it.remove();
+                    }
+
+                    System.out.println("-");
+                    it = possibleVariants.iterator();
+
+                    while (it.hasNext()) {
+                        String s = it.next();
+                        System.out.println(s);
+                    }
+
+                    RatcliffObershelpMetric rm = RatcliffObershelpMetric.apply();
+                    Predef.DummyImplicit di = new Predef.DummyImplicit();
+
+                    it = possibleVariants.iterator();
+
+                    while (it.hasNext()) {
+                        String s = it.next();
+                        Option<Object> some = rm.compare(twitWords[j], s, di);
+                        System.out.println("* " + s + " sim " + some.get());
+                        if ((Double) some.get() < LEXICAL_SIMILARITY_LIMIT)
+                            it.remove();
+                    }
+
                 }
-
-                RatcliffObershelpMetric rm = RatcliffObershelpMetric.apply();
-                Predef.DummyImplicit di = new Predef.DummyImplicit();
-                //System.out.println(rm.compare("Pennsylvania".toCharArray(), "Pencilvaneya".toCharArray()));
-                //System.out.println(rm.compare("Pencilvaneya", "Pennsylvania", new Predef.DummyImplicit()));
-                //Option<Object> some = (Option<Object>) rm.compare("Pencilvaneya", "Pennsylvania", new Predef.DummyImplicit());
-                //System.out.println(some.get());
-                //    for (String st : possibleVariants) {
-                //        Option<Object> some = rm.compare(twitWords[j], st, di);
-                //
-                //        System.out.println(st + " DoubleMetaphone " + dm.doubleMetaphone(st) + " similarity " + some.get());
-                //}
-
-                it = possibleVariants.iterator();
-
-                while (it.hasNext()) {
-                    Option<Object> some = rm.compare(twitWords[j], it.next(), di);
-                    if ((Double) some.get() < LEXICAL_SIMILARITY_LIMIT)
-                        it.remove();
-                }
+                System.out.println("---");
                 StringBuilder sb1 = new StringBuilder();
-                it = possibleVariants.iterator();
+                Iterator<String> it = possibleVariants.iterator();
                 while (it.hasNext()) {
                     String s = it.next();
                     System.out.println(s);
                     sb1.append(s).append(" ");
 
                 }
-                System.out.println("-------");
+
+                posibleVars.add(sb1.toString());
+                /*System.out.println("-------");
                 System.out.println(twit);
                 System.out.println(sb1.toString());
                 System.out.println("--------");
@@ -199,14 +216,50 @@ public class Tenor2 {
                     twitWords[j] = line2;
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }*/
 
                 i++;
             }
         }
-        Date d = new Date();
-        System.out.println("!@!@#!@");
-        System.out.println(d);
-        System.out.println(Arrays.toString(twitWords));
+
+//        System.out.println("-------");
+//        System.out.println(twit);
+//        System.out.println(sb1.toString());
+        System.out.println("--------");
+
+        try {
+            List<String> commands = new ArrayList<String>();
+            commands.add("python");
+            commands.add("/home/samsung/programs/prak/prakRep/Kursovik/src/test3.py");
+            commands.add(twit);
+            commands.addAll(posibleVars);
+//            ProcessBuilder builder = new ProcessBuilder("python", "/home/samsung/programs/prak/prakRep/Kursovik/src/test.py",
+//                    twit, sb1.toString(), Integer.toString(i));
+            ProcessBuilder builder = new ProcessBuilder(commands);
+            builder.redirectErrorStream(true);
+            Process p = builder.start();
+            InputStream stdout = p.getInputStream();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+
+            String line;
+            String line2 = "";
+            while ((line = reader.readLine()) != null) {
+                System.out.println("Stdout: " + line);
+                line2 = line;
+            }
+//            System.out.println("line2 " + line2);
+//            twitWords[j] = line2;
+            Date d = new Date();
+            System.out.println("Result");
+            System.out.println(d);
+            System.out.println("line2 " + line2);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+//        Date d = new Date();
+//        System.out.println("!@!@#!@");
+//        System.out.println(d);
+//        System.out.println(Arrays.toString(twitWords));
     }
 }
