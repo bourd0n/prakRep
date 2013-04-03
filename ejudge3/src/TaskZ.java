@@ -16,20 +16,6 @@ public class TaskZ {
         if (wordsFromDict == null || wordsFromDict.isEmpty())
             System.out.println("?");
         else {
-            Collections.sort(wordsFromDict, new Comparator<String>() {
-                @Override
-                public int compare(String o1, String o2) {
-                    int p1 = word.indexOf(o1);
-                    int p2 = word.indexOf(o2);
-                    if (p1 == p2)
-                        return 0;
-                    else if (p1 < p2)
-                        return -1;
-                    else
-                        return 1;
-                }
-            });
-
             for (String s : wordsFromDict) {
                 System.out.print(s + " ");
             }
@@ -43,7 +29,6 @@ class Dictionary {
 
     private ArrayList<String> dictionary;
 
-    //todo: change
     public static final int OCCURANCE_LIMIT = 3;
 
     private int count = 0;
@@ -70,9 +55,9 @@ class Dictionary {
     public ArrayList<String> checkWord2(String word, ArrayList<String> dictionary) {
         ArrayList<String> res = new ArrayList<String>();
         String str = word;
-//        System.out.println("word: " + word);
         for (String s : dictionary) {
-            if (str.contains(s)) {
+            //if (str.contains(s)) {
+            if (str.startsWith(s)) {
                 ArrayList<String> tmpRes;
                 ArrayList<String> d = new ArrayList<String>(dictionary);
                 d.remove(s);
@@ -87,13 +72,8 @@ class Dictionary {
                         if (count <= OCCURANCE_LIMIT)
                             return res;
                         else {
-//                            return null;
-//                           res.remove(res.size() - 1);
                             count -= res.size();
                             res.clear();
-//                            count -= res.size();
-
-//                            return null;
                         }
                     } else {
                         res.remove(res.size() - 1);
