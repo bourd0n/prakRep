@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Task1Edit {
@@ -136,7 +135,7 @@ class LexScanner {
                         return new Lexem(LexemType.END);
                     if ( c == ' ' || c == '\n' || c == '\r' || c == '\t')
                         gc();
-                    else if (Character.isAlphabetic(c))
+                    else if (Character.isAlphabetic(c) && Character.toString(c).matches("[a-zA-Z]"))
                     {
                         clear();
                         add();
@@ -210,12 +209,12 @@ class LexScanner {
                             return new Lexem(LexemType.ID, getBufString());
                         }
                     }
-                    else if (Character.isAlphabetic(c) || Character.isDigit(c)){
+                    else if (Character.isAlphabetic(c) && Character.toString(c).matches("[a-zA-Z]")){
                         add();
                         gc();
                     }
                     else
-                        return new Lexem(LexemType.ID, getBufString());;
+                        return new Lexem(LexemType.ID, getBufString());
                     break;
                 case NUMB:
                     if ( c == null ){
@@ -359,7 +358,7 @@ class SemParser {
             if (curLex.getType() == LexemType.ARROW){
                 sb.append(curLex.getValue() + " ");
                 gl();
-                if (curLex.getType() == LexemType.ID){
+                if (curLex.getType() == LexemType.ID || curLex.getType() == LexemType.STRING || curLex.getType() == LexemType.NUM){
                     sb.append(curLex.getValue());
                     gl();
                     call();
