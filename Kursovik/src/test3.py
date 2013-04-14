@@ -4,8 +4,7 @@ from nltk.corpus import brown
 from nltk.corpus import cess_cat
 from nltk.probability import LidstoneProbDist
 from nltk.model import NgramModel
-from nltk.tokenize import word_tokenize # Tokenizer
-
+from nltk.tokenize import word_tokenize, wordpunct_tokenize # Tokenizer
 if __name__ == "__main__":
 
 #add language
@@ -24,6 +23,7 @@ if __name__ == "__main__":
     #pos = sys.argv[3]
 
     posVars = list()
+    tmpVars = list()
     for i in range(2, len(sys.argv)):
         posVars.append(sys.argv[i])
 #        print sys.argv[i]
@@ -39,12 +39,15 @@ if __name__ == "__main__":
     for i in range(len(tTwit)):
 #        print '------'
         pVars = posVars[i]
-        tokensVars = word_tokenize(pVars)
+#        tokensVars = word_tokenize(pVars)
+        tokensVars = wordpunct_tokenize(pVars)
+        tokensVars = filter (lambda a: a != ',', tokensVars)
 #        print ' '.join(tokensVars)
         perp = ""
         res = ""
         for element in tokensVars:
             tTwit[i] = element
+            print 'iter ' + ' '.join(tTwit)
             perplexity = model.perplexity(tTwit)
             if perplexity < perp :
                 perp = perplexity
