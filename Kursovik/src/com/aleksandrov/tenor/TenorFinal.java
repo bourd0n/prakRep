@@ -9,6 +9,7 @@ public class TenorFinal {
 
     private static final String SOURCE_FILE = "/home/samsung/programs/prak/prakRep/Kursovik/src/test";
 
+
     //todo: think about punctuation
     public static void main(String[] args) throws IOException {
         Date d1 = new Date();
@@ -16,6 +17,11 @@ public class TenorFinal {
         Scanner scanner = new Scanner(new File(SOURCE_FILE));
         String twit = scanner.nextLine();
         TwitProcessor processor = new TwitProcessor();
-        System.out.println(" FINAL Result : " + processor.processTwit(twit));
+//
+// System.out.println(" FINAL Result : " + processor.processTwit(twit));
+        String t = processor.processTwit(twit);
+//        String t1 = processor.processTwit(t);
+        System.out.println("FINAL1: " + t );
+//        System.out.println("FINAL2: " + t1);
     }
 }

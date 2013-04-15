@@ -14,10 +14,15 @@ public class TwitProcessor {
     private static final double LEXICAL_SIMILARITY_LIMIT = 0.60;
     private static final String PYTHON_SCRIPT = "/home/samsung/programs/prak/prakRep/Kursovik/src/test3.py";
 
-    private SlangMap slangMap;
+    private static final String PATH_TO_SLANG = "/home/samsung/programs/prak/prakRep/Kursovik/src/slang.txt";
+    private static final String PATH_TO_ABBREVIATIONS = "/home/samsung/programs/prak/prakRep/Kursovik/src/abr.txt";
+
+    private WordMap slangMap;
+    private WordMap abrMap;
 
     public TwitProcessor() throws FileNotFoundException {
-        slangMap = new SlangMap();
+        slangMap = new WordMap(PATH_TO_SLANG, ":");
+        abrMap = new WordMap(PATH_TO_ABBREVIATIONS, ",");
     }
 
     public String processTwit(String twit) throws IOException {
@@ -33,7 +38,7 @@ public class TwitProcessor {
             String[] aspellVariants = aspell.find(twitWords[j]);
 
             if (aspellVariants.length == 1 && aspellVariants[0].equals(twitWords[j])
-                    && !twitWords[j].matches(".*\\d.*")) {
+                    && !twitWords[j].matches(".*\\d.*") && abrMap.find(twitWords[j].trim()) == null) {
                 //ok - not OOV
                 String slangAbr = slangMap.find(twitWords[j].toLowerCase().trim());
 
@@ -41,14 +46,18 @@ public class TwitProcessor {
                     possibleVars.add(slangAbr + ",");
                 else
                     possibleVars.add(twitWords[j] + ",");
-//                possibleVars.add(";");
             } else {
                 //OOV
                 possibleVars.add(processOOV(twitWords[j], aspellVariants));
-//                possibleVars.add(";");
             }
         }
 
+        return null;
+//        String s = callPython(twit, possibleVars);
+//        return s;
+    }
+
+    private String callPython(String twit, Collection<String> possibleVars) throws IOException {
         System.out.println("--------");
 
         List<String> commands = new ArrayList<String>();
@@ -74,55 +83,73 @@ public class TwitProcessor {
         System.out.println("line2 " + line2);
 
         return line2;
-
     }
 
     private String processOOV(String twitWord, String[] aspellVariants) {
+        System.out.println(" Proccess OOV " + twitWord);
 
         Collection<String> possibleVariants = new ArrayList<String>();
 
         CommonTransform commonTransform = new CommonTransform();
 
-        String slangAbr = slangMap.find(twitWord.trim());
+        String slang = slangMap.find(twitWord.trim());
 
-        if (slangAbr != null) {
-            return slangAbr + ",";
+        if (slang != null) {
+            System.out.println("    Slang " + slang);
+            return slang + ",";
         }
+
+        String abr = abrMap.find(twitWord.trim());
+
+        if (abr != null) {
+            System.out.println("    Abbr " + abr);
+            possibleVariants.add(abr);
+        }
+
+        Collection<String> processingVariants = new ArrayList<String>();
 
         for (String s : aspellVariants) {
 //            System.out.println("1 " + s);
-            possibleVariants.add(s);
+            processingVariants.add(s);
         }
 
         //Common transformations like repeated symbols and numbers
-        possibleVariants.addAll(commonTransform.getCommonTransformations(twitWord));
+        processingVariants.addAll(commonTransform.getCommonTransformations(twitWord));
 
         if (!twitWord.matches(".*\\d.*")) {
             DoubleMetaphone dm = new DoubleMetaphone();
-            String sourceDM = dm.doubleMetaphone(twitWord);
 
+            Iterator<String> it = processingVariants.iterator();
 
-            Iterator<String> it = possibleVariants.iterator();
+            System.out.println("-------- Source dm: " + dm.doubleMetaphone(twitWord));
+            Iterator<String> it1 = processingVariants.iterator();
+            while (it1.hasNext()) {
+                String s = it1.next();
+                System.out.println("    " + s);
+            }
+
 
             while (it.hasNext()) {
                 String s = it.next();
-//                System.out.println(s);
-                if (!dm.isDoubleMetaphoneEqual(s, twitWord))
+                System.out.print(" " + s + " " + dm.doubleMetaphone(s, true));
+                if (!dm.isDoubleMetaphoneEqual(s, twitWord, true))
                     it.remove();
             }
 
 //            System.out.println("-");
-            it = possibleVariants.iterator();
+            it = processingVariants.iterator();
 
-            while (it.hasNext()) {
-                String s = it.next();
-//                System.out.println(s);
+            System.out.println("-----");
+            it1 = processingVariants.iterator();
+            while (it1.hasNext()) {
+                String s = it1.next();
+                System.out.println("    " + s);
             }
 
             RatcliffObershelpMetric rm = RatcliffObershelpMetric.apply();
             Predef.DummyImplicit di = new Predef.DummyImplicit();
 
-            it = possibleVariants.iterator();
+            it = processingVariants.iterator();
 
             while (it.hasNext()) {
                 String s = it.next();
@@ -132,9 +159,17 @@ public class TwitProcessor {
                     it.remove();
             }
 
+            it1 = processingVariants.iterator();
+            System.out.println("---");
+            while (it1.hasNext()) {
+                String s = it1.next();
+                System.out.println("    " + s);
+            }
+
         }
 //        System.out.println("---");
         StringBuilder sb1 = new StringBuilder();
+        possibleVariants.addAll(processingVariants);
         Iterator<String> it = possibleVariants.iterator();
         while (it.hasNext()) {
             String s = it.next();
@@ -143,6 +178,8 @@ public class TwitProcessor {
 
         }
 
+        String s = sb1.toString();
+        System.out.println("        Res " + s);
         return sb1.toString();
     }
 }
