@@ -14,8 +14,9 @@ if __name__ == "__main__":
     # estimator for smoothing the N-gram model
     estimator1 = lambda fdist, bins: LidstoneProbDist(fdist, 0.2)
 
+    tokens1 = list(brown.words())
     # N-gram language model with 3-grams
-    model = NgramModel(3, tTwit, estimator=estimator1)
+    model = NgramModel(3, tokens1, estimator=estimator1)
 
 
     twit = sys.argv[1]
@@ -40,8 +41,13 @@ if __name__ == "__main__":
 #        print '------'
         pVars = posVars[i]
 #        tokensVars = word_tokenize(pVars)
-        tokensVars = wordpunct_tokenize(pVars)
+        print ' vars ' + pVars
+#        tokensVars = wordpunct_tokenize(pVars)
+        tokensVars = pVars.split(',')
+        del tokensVars[-1]
+#        print '.'.join(tokensVars)
         tokensVars = filter (lambda a: a != ',', tokensVars)
+#        print ';'.join(tokensVars)
 #        print ' '.join(tokensVars)
         perp = ""
         res = ""

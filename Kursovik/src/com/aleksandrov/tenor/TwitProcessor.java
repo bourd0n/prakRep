@@ -12,7 +12,9 @@ import java.util.*;
 public class TwitProcessor {
 
     private static final double LEXICAL_SIMILARITY_LIMIT = 0.60;
-    private static final String PYTHON_SCRIPT = "/home/samsung/programs/prak/prakRep/Kursovik/src/test3.py";
+//    private static final String PYTHON_SCRIPT = "/home/samsung/programs/prak/prakRep/Kursovik/src/test3.py";
+
+    private static final String PYTHON_SCRIPT = "/home/samsung/programs/prak/prakRep/Kursovik/src/nltkanalyzer.py";
 
     private static final String PATH_TO_SLANG = "/home/samsung/programs/prak/prakRep/Kursovik/src/slang.txt";
     private static final String PATH_TO_ABBREVIATIONS = "/home/samsung/programs/prak/prakRep/Kursovik/src/abr.txt";
@@ -29,8 +31,6 @@ public class TwitProcessor {
         String[] twitWords = twit.toLowerCase().split(" ");
 
         Aspell aspell = new Aspell();
-
-        //int i = 0;
         Collection<String> possibleVars = new ArrayList<String>();
 
         for (int j = 0; j < twitWords.length; j++) {
@@ -50,15 +50,22 @@ public class TwitProcessor {
                 //OOV
                 possibleVars.add(processOOV(twitWords[j], aspellVariants));
             }
+
+
         }
 
-        return null;
+        StringBuilder sb = new StringBuilder();
+        for (String w : possibleVars){
+            sb.append(w).append(";");
+        }
+//        return null;
 //        String s = callPython(twit, possibleVars);
 //        return s;
+        return sb.toString();
     }
 
     private String callPython(String twit, Collection<String> possibleVars) throws IOException {
-        System.out.println("--------");
+       System.out.println("--------");
 
         List<String> commands = new ArrayList<String>();
         commands.add("python");
@@ -181,5 +188,35 @@ public class TwitProcessor {
         String s = sb1.toString();
         System.out.println("        Res " + s);
         return sb1.toString();
+    }
+
+
+    public String callPythonForFiles(String twitsFile, String varsFile, String outFile) throws IOException {
+        System.out.println("--------");
+
+        List<String> commands = new ArrayList<String>();
+        commands.add("python");
+        commands.add(PYTHON_SCRIPT);
+        commands.add(twitsFile);
+        commands.add(varsFile);
+        commands.add(outFile);
+        ProcessBuilder builder = new ProcessBuilder(commands);
+        builder.redirectErrorStream(true);
+        Process p = builder.start();
+        InputStream stdout = p.getInputStream();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+
+        String line;
+        String line2 = "";
+        while ((line = reader.readLine()) != null) {
+            System.out.println("Stdout: " + line);
+            line2 = line;
+        }
+        Date d = new Date();
+        System.out.println("Result");
+        System.out.println(d);
+        System.out.println("line2 " + line2);
+
+        return line2;
     }
 }

@@ -209,6 +209,7 @@ PTKFGS: Punch the Keys For God's Sake
 pr0n: Intentional misspelling of porn
 PW: Persistent World (gaming)
 pwned: Intentional misspelling of owned
+pix: pictures
 
 
 QFT: Quoted for truthiness—either to show satire or agreement with something satiric.
