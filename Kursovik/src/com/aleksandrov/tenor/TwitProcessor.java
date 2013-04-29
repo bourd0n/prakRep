@@ -8,6 +8,8 @@ import scala.Predef;
 
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TwitProcessor {
 
@@ -28,35 +30,62 @@ public class TwitProcessor {
     }
 
     public String processTwit(String twit) throws IOException {
+        //delete urls
+        Pattern p = Pattern.compile("(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?");
+        Matcher m = p.matcher(twit);
+        m.replaceAll("");
+
+        //delete punctuation
+        twit = twit.replaceAll("[\\p{Punct}&&[^@#]]", " ");
+
         String[] twitWords = twit.toLowerCase().split(" ");
 
+        twitWords = preprocess(twitWords);
         Aspell aspell = new Aspell();
         Collection<String> possibleVars = new ArrayList<String>();
-
+        String type = "";
         for (int j = 0; j < twitWords.length; j++) {
-            StringBuilder sb = new StringBuilder();
-            String[] aspellVariants = aspell.find(twitWords[j]);
+                if (twitWords[j] != null && !twitWords[j].isEmpty()) {
 
-            if (aspellVariants.length == 1 && aspellVariants[0].equals(twitWords[j])
-                    && !twitWords[j].matches(".*\\d.*") && abrMap.find(twitWords[j].trim()) == null) {
-                //ok - not OOV
-                String slangAbr = slangMap.find(twitWords[j].toLowerCase().trim());
+                    System.out.println(twitWords[j]);
+                    //            if (!twitWords[j].matches("\\p{Punct}")) {
+                    if (twitWords[j].startsWith("@") || twitWords[j].startsWith("#")) {
+                        type = "NO";
+                        possibleVars.add(twitWords[j] + "*" + type);
+                    } else {
+                        String[] aspellVariants = null;
+//                        if (!twitWords[j].matches(".*\\d.*"))
+                        if (!twitWords[j].matches(".*\\d+.*"))
+                            aspellVariants = aspell.find(twitWords[j]);
+//                        System.out.println("twitWords[j] " + twitWords[j] + " Array" + Arrays.toString(aspellVariants));
+                        if (!twitWords[j].matches(".*\\d+.*") && abrMap.find(twitWords[j].trim()) == null
+                                && aspellVariants != null && aspellVariants.length == 1 && aspellVariants[0].equals(twitWords[j])) {
+                            //ok - not OOV
+                            String slangAbr = slangMap.find(twitWords[j].toLowerCase().trim());
 
-                if (slangAbr != null)
-                    possibleVars.add(slangAbr + ",");
-                else
-                    possibleVars.add(twitWords[j] + ",");
-            } else {
-                //OOV
-                possibleVars.add(processOOV(twitWords[j], aspellVariants));
-            }
+                            if (slangAbr != null) {
+                                type = "OOV";
+                                possibleVars.add(slangAbr + "*" + type);
+                            } else {
+                                type = "IV";
+                                possibleVars.add(twitWords[j] + "*" + type);
+                            }
+                        } else {
+                            //OOV
+                            type = "OOV";
+                            System.out.println("processOOV");
+                            possibleVars.add(processOOV(twitWords[j], aspellVariants) + type);
+                        }
 
-
+                        //                }
+                    }
+                }
         }
 
         StringBuilder sb = new StringBuilder();
-        for (String w : possibleVars){
-            sb.append(w).append(";");
+        for (String w : possibleVars) {
+//            sb.append(w).append("~");
+            sb.append(w).append("~");
         }
 //        return null;
 //        String s = callPython(twit, possibleVars);
@@ -64,8 +93,18 @@ public class TwitProcessor {
         return sb.toString();
     }
 
+    private String[] preprocess(String[] twitWords) {
+        List<String> list = Arrays.asList(twitWords);
+        list.removeAll(new ArrayList<String>() {{
+            add("*");
+            add("~");
+        }});
+
+        return twitWords;
+    }
+
     private String callPython(String twit, Collection<String> possibleVars) throws IOException {
-       System.out.println("--------");
+        System.out.println("--------");
 
         List<String> commands = new ArrayList<String>();
         commands.add("python");
@@ -115,10 +154,11 @@ public class TwitProcessor {
 
         Collection<String> processingVariants = new ArrayList<String>();
 
-        for (String s : aspellVariants) {
+        if (aspellVariants != null && aspellVariants.length >= 1)
+            for (String s : aspellVariants) {
 //            System.out.println("1 " + s);
-            processingVariants.add(s);
-        }
+                processingVariants.add(s);
+            }
 
         //Common transformations like repeated symbols and numbers
         processingVariants.addAll(commonTransform.getCommonTransformations(twitWord));
@@ -177,11 +217,15 @@ public class TwitProcessor {
 //        System.out.println("---");
         StringBuilder sb1 = new StringBuilder();
         possibleVariants.addAll(processingVariants);
+
+        //add word self
+        possibleVariants.add(twitWord);
+
         Iterator<String> it = possibleVariants.iterator();
         while (it.hasNext()) {
             String s = it.next();
 //            System.out.println(s);
-            sb1.append(s).append(",");
+            sb1.append(s).append("*");
 
         }
 
@@ -191,7 +235,7 @@ public class TwitProcessor {
     }
 
 
-    public String callPythonForFiles(String twitsFile, String varsFile, String outFile) throws IOException {
+    public String callPythonForFiles(String twitsFile, String varsFile, String outFile, boolean forTest) throws IOException {
         System.out.println("--------");
 
         List<String> commands = new ArrayList<String>();
@@ -200,6 +244,7 @@ public class TwitProcessor {
         commands.add(twitsFile);
         commands.add(varsFile);
         commands.add(outFile);
+        commands.add(forTest ? "testMode" : "simpleMode");
         ProcessBuilder builder = new ProcessBuilder(commands);
         builder.redirectErrorStream(true);
         Process p = builder.start();

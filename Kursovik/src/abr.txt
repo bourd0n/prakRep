@@ -52,4 +52,5 @@ kk,okay
 an,and
 lasi,lazy
 wee,week
+tnx, thanks
 

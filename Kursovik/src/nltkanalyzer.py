@@ -1,13 +1,19 @@
 # Import the corpus and functions used from nltk library
-import os, sys
+import os, sys, re
 from nltk.corpus import brown
 from nltk.corpus import cess_cat
 from nltk.corpus import nps_chat
 from nltk.probability import LidstoneProbDist
 from nltk.model import NgramModel
 from nltk.tokenize import word_tokenize, wordpunct_tokenize # Tokenizer
+from nltk.tokenize import RegexpTokenizer
 
 if __name__ == "__main__":
+    urlRegex = '(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?'
+    specRegex = '([#@]+[\w]+)'
+    symbolsRegex = '[.,!?;\(\)_-]+'
+    simpleWordRegex = '[\w]+'
+
     tTwit = list(nps_chat.words())
 
     # estimator for smoothing the N-gram model
@@ -21,6 +27,7 @@ if __name__ == "__main__":
     twitsFile = sys.argv[1]
     varsFile = sys.argv[2]
     outFile = sys.argv[3]
+    mode = sys.argv[4]
 
     # open files
     f = open(twitsFile)
@@ -36,35 +43,68 @@ if __name__ == "__main__":
         varLine = vars[k]
 
         posVars = list()
-        posVars = varLine.split(';')
+        posVars = varLine.split('~')
         del posVars[-1]
-        posVars = filter(lambda a: a != ';', posVars)
+        posVars = filter(lambda a: a != '~', posVars)
 
-        tTwit = word_tokenize(twit)
-#        print 'posVars ' + ' '.join(posVars)
+        #        tTwit = word_tokenize(twit)
+        tokenizer = RegexpTokenizer(urlRegex + '|' + symbolsRegex + '|' + specRegex + '|' + simpleWordRegex)
+        tTwit = tokenizer.tokenize(twit)
 
+        print '^^^^' + ' '.join(tTwit)
+
+        tTwitOriginal = tTwit
+        #        print 'posVars ' + ' '.join(posVars)
+
+        #process # and @
+        #if ('#' in tTwit or '@' )
+        #for i in range(len(tTwit))
+
+        types = list()
+        j = 0
         for i in range(len(tTwit)):
-            pVars = posVars[i]
-#            print ' vars ' + pVars
-            tokensVars = pVars.split(',')
-            del tokensVars[-1]
-            tokensVars = filter(lambda a: a != ',', tokensVars)
-            perp = ""
-            res = ""
-            for element in tokensVars:
-                tTwit[i] = element
-#                print 'iter ' + ' '.join(tTwit)
-                perplexity = model.perplexity(tTwit)
-                if perplexity < perp:
-                    perp = perplexity
-                    res = element
-            tTwit[i] = res
+            print '*****' + tTwit[i]
+            if re.match(symbolsRegex, tTwit[i]) is None:
+                if re.match(urlRegex, tTwit[i]) is None:
+                    if re.match(specRegex, tTwit[i]) is None:
+                        pVars = posVars[j]
+                        print ' vars ' + pVars
+                        print i
+                        print j
+                        tokensVars = pVars.split('*')
+                        if tokensVars[-1] is not '*':
+                            types.append(tokensVars[-1])
+                        del tokensVars[-1]
+                        tokensVars = filter(lambda a: a != '*', tokensVars)
+                        perp = ""
+                        res = ""
+                        for element in tokensVars:
+                            tTwit[i] = element
+                            #                print 'iter ' + ' '.join(tTwit)
+                            perplexity = model.perplexity(tTwit)
+                            if perplexity < perp:
+                                perp = perplexity
+                                res = element
+                        tTwit[i] = res
+                    else:
+                        types.append('NO')
+                    j = j + 1
+                else:
+                    types.append('NO')
+            else:
+                types.append('NO')
 
         print '===='
         print twit
         s = ' '.join(tTwit)
         print s
-        f.write(s + '\n')
-
+        print tTwit
+        if mode == 'simpleMode':
+#            print s
+            f.write(s + '\n')
+        if mode == 'testMode':
+#            print tTwit
+            f.write(tTwit.__str__() + '\n')
+            f.write(types.__str__() + '\n')
     f.close()
 
