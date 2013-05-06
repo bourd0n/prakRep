@@ -36,7 +36,7 @@ public class TwitProcessor {
         m.replaceAll("");
 
         //delete punctuation
-        twit = twit.replaceAll("[\\p{Punct}&&[^@#]]", " ");
+        twit = twit.replaceAll("[\\p{Punct}&&[^\\-@#_']]", " ");
 
         String[] twitWords = twit.toLowerCase().split(" ");
 
@@ -45,41 +45,66 @@ public class TwitProcessor {
         Collection<String> possibleVars = new ArrayList<String>();
         String type = "";
         for (int j = 0; j < twitWords.length; j++) {
-                if (twitWords[j] != null && !twitWords[j].isEmpty()) {
+            if (twitWords[j] != null && !twitWords[j].isEmpty()) {
 
-                    System.out.println(twitWords[j]);
-                    //            if (!twitWords[j].matches("\\p{Punct}")) {
-                    if (twitWords[j].startsWith("@") || twitWords[j].startsWith("#")) {
+                System.out.println(twitWords[j]);
+                //            if (!twitWords[j].matches("\\p{Punct}")) {
+                if (twitWords[j].startsWith("@") || twitWords[j].startsWith("#")) {
+                    type = "NO";
+                    possibleVars.add(twitWords[j] + "*" + type);
+                } else {
+                    String[] aspellVariants = null;
+//                        if (!twitWords[j].matches(".*\\d.*"))
+                    if (!twitWords[j].matches(".*\\d+.*") && !twitWords[j].matches("\\p{Punct}"))
+                        aspellVariants = aspell.find(twitWords[j]);
+                    System.out.println("twitWords[j] " + twitWords[j] + " Array" + Arrays.toString(aspellVariants));
+                    if (!twitWords[j].matches(".*\\d+.*") && abrMap.find(twitWords[j].trim()) == null
+                            && aspellVariants != null && aspellVariants.length == 1 && aspellVariants[0].equals(twitWords[j])) {
+                        //ok - not OOV
+                        ArrayList<String> slangAbr = slangMap.find(twitWords[j].toLowerCase().trim());
+
+                        ArrayList<String> abrs = abrMap.find(twitWords[j].toLowerCase().trim());
+
+                        if (slangAbr != null && !slangAbr.isEmpty()) {
+                            type = "OOV";
+                            StringBuilder sb = new StringBuilder();
+                            for (String s : slangAbr) {
+                                sb.append(s).append("*");
+                            }
+//                                possibleVars.add(slangAbr + "*" + type);
+                            sb.append(type);
+                            possibleVars.add(sb.toString());
+                        } else if (abrs != null && !abrs.isEmpty()) {
+                            type = "OOV";
+                            StringBuilder sb = new StringBuilder();
+                            for (String s : abrs) {
+                                sb.append(s).append("*");
+                            }
+//                                possibleVars.add(slangAbr + "*" + type);
+                            sb.append(type);
+                            possibleVars.add(sb.toString());
+                        } else {
+                            type = "IV";
+                            possibleVars.add(twitWords[j] + "*" + type);
+                        }
+                        //} else if (!twitWords) {
+                    } else if (aspellVariants != null && aspellVariants.length >= 1 && twitWords[j].toLowerCase().equals(aspellVariants[0].toLowerCase())) {
+                        type = "IV";
+                        possibleVars.add(twitWords[j] + "*" + type);
+                    } else if (twitWords[j].matches("\\d{2,}")) {
+                        //number
                         type = "NO";
                         possibleVars.add(twitWords[j] + "*" + type);
-                    } else {
-                        String[] aspellVariants = null;
-//                        if (!twitWords[j].matches(".*\\d.*"))
-                        if (!twitWords[j].matches(".*\\d+.*"))
-                            aspellVariants = aspell.find(twitWords[j]);
-//                        System.out.println("twitWords[j] " + twitWords[j] + " Array" + Arrays.toString(aspellVariants));
-                        if (!twitWords[j].matches(".*\\d+.*") && abrMap.find(twitWords[j].trim()) == null
-                                && aspellVariants != null && aspellVariants.length == 1 && aspellVariants[0].equals(twitWords[j])) {
-                            //ok - not OOV
-                            String slangAbr = slangMap.find(twitWords[j].toLowerCase().trim());
-
-                            if (slangAbr != null) {
-                                type = "OOV";
-                                possibleVars.add(slangAbr + "*" + type);
-                            } else {
-                                type = "IV";
-                                possibleVars.add(twitWords[j] + "*" + type);
-                            }
-                        } else {
-                            //OOV
-                            type = "OOV";
-                            System.out.println("processOOV");
-                            possibleVars.add(processOOV(twitWords[j], aspellVariants) + type);
-                        }
-
-                        //                }
+                    } else if (!twitWords[j].matches("\\p{Punct}")) {
+                        //OOV
+                        type = "OOV";
+                        System.out.println("processOOV");
+                        possibleVars.add(processOOV(twitWords[j], aspellVariants) + type);
                     }
+
+                    //                }
                 }
+            }
         }
 
         StringBuilder sb = new StringBuilder();
@@ -103,34 +128,6 @@ public class TwitProcessor {
         return twitWords;
     }
 
-    private String callPython(String twit, Collection<String> possibleVars) throws IOException {
-        System.out.println("--------");
-
-        List<String> commands = new ArrayList<String>();
-        commands.add("python");
-        commands.add(PYTHON_SCRIPT);
-        commands.add(twit);
-        commands.addAll(possibleVars);
-        ProcessBuilder builder = new ProcessBuilder(commands);
-        builder.redirectErrorStream(true);
-        Process p = builder.start();
-        InputStream stdout = p.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
-
-        String line;
-        String line2 = "";
-        while ((line = reader.readLine()) != null) {
-            System.out.println("Stdout: " + line);
-            line2 = line;
-        }
-        Date d = new Date();
-        System.out.println("Result");
-        System.out.println(d);
-        System.out.println("line2 " + line2);
-
-        return line2;
-    }
-
     private String processOOV(String twitWord, String[] aspellVariants) {
         System.out.println(" Proccess OOV " + twitWord);
 
@@ -138,18 +135,28 @@ public class TwitProcessor {
 
         CommonTransform commonTransform = new CommonTransform();
 
-        String slang = slangMap.find(twitWord.trim());
+        ArrayList<String> slang = slangMap.find(twitWord.trim());
 
-        if (slang != null) {
-            System.out.println("    Slang " + slang);
-            return slang + ",";
+        if (slang != null && !slang.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String slangWord : slang) {
+                System.out.println("    Slang " + slangWord);
+                sb.append(slangWord).append("*");
+            }
+            //return slang + "*";
+            return sb.toString();
         }
 
-        String abr = abrMap.find(twitWord.trim());
+        ArrayList<String> abr = abrMap.find(twitWord.trim());
 
-        if (abr != null) {
-            System.out.println("    Abbr " + abr);
-            possibleVariants.add(abr);
+        if (abr != null && !abr.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (String abrWord : abr) {
+                System.out.println("    Abbr " + abrWord);
+                sb.append(abrWord).append("*");
+            }
+//            possibleVariants.add(abr);
+            possibleVariants.add(sb.toString());
         }
 
         Collection<String> processingVariants = new ArrayList<String>();
@@ -179,8 +186,8 @@ public class TwitProcessor {
             while (it.hasNext()) {
                 String s = it.next();
                 System.out.print(" " + s + " " + dm.doubleMetaphone(s, true));
-                if (!dm.isDoubleMetaphoneEqual(s, twitWord, true))
-                    it.remove();
+                //if (!dm.isDoubleMetaphoneEqual(s, twitWord, true))
+                //    it.remove();
             }
 
 //            System.out.println("-");
@@ -235,7 +242,7 @@ public class TwitProcessor {
     }
 
 
-    public String callPythonForFiles(String twitsFile, String varsFile, String outFile, boolean forTest) throws IOException {
+    public String callPythonForFiles(String twitsFile, String varsFile, String outFile, String outTwitFile, boolean forTest) throws IOException {
         System.out.println("--------");
 
         List<String> commands = new ArrayList<String>();
@@ -244,6 +251,7 @@ public class TwitProcessor {
         commands.add(twitsFile);
         commands.add(varsFile);
         commands.add(outFile);
+        commands.add(outTwitFile);
         commands.add(forTest ? "testMode" : "simpleMode");
         ProcessBuilder builder = new ProcessBuilder(commands);
         builder.redirectErrorStream(true);

@@ -68,23 +68,6 @@ business	IV	business
 voice	IV	voice
 )	NO	)
 hehe	OOV	hehe
-16
-imma	OOV	imma
-stop	IV	stop
-#subtweetin	NO	#subtweetin
-folks	IV	folks
-...	NO	...
-imma	OOV	imma
-jus	OOV	just
-start	IV	start
-puttn	OOV	putting
-it	IV	it
-out	IV	out
-there	IV	there
-shrugs	IV	shrugs
-u'll	OOV	you'll
-be	IV	be
-iight	OOV	right
 10
 a	IV	a
 shitty	IV	shitty
@@ -96,9 +79,10 @@ u	OOV	you
 at	IV	at
 lmao	OOV	lmao
 #subtweet	NO	#subtweet
-29
+31
 @chanitafoster	NO	@chanitafoster
-it's	IV	it's
+it	IV	it
+is IV is
 soo	OOV	so
 much	IV	much
 hatas	OOV	haters
@@ -119,7 +103,8 @@ doing	IV	doing
 u	OOV	you
 ,	NO	,
 ,	NO	,
-can't	IV	can't
+can	IV	can
+not IV not
 wait	IV	wait
 till	IV	till
 next	IV	next
@@ -208,12 +193,13 @@ beautiful	IV	beautiful
 thank	IV	thank
 u	OOV	you
 !	NO	!
-29
+31
 this	IV	this
 negative	IV	negative
 nuisance	IV	nuisance
 just	IV	just
-won't	IV	won't
+will	IV	will
+not IV not
 stay	IV	stay
 in	IV	in
 the	IV	the
@@ -236,7 +222,8 @@ my	IV	my
 life	IV	life
 ...	NO	...
 k	OOV	ok
-i'm	IV	i'm
+i	IV	i
+am IV am
 done	IV	done
 28
 @alinemarie524	NO	@alinemarie524
@@ -308,15 +295,6 @@ tay	OOV	tay
 congrats	OOV	congratulations
 girl	IV	girl
 .	NO	.
-8
-im	OOV	I'm
-bored	IV	bored
-somebody	IV	somebody
-i.	NO	i.
-m	OOV	am
-me	IV	me
-:	NO	:
-http://yearbook.com/a/p7542	NO	http://yearbook.com/a/p7542
 20
 rt	IV	rt
 @bigkenof334mobb	NO	@bigkenof334mobb
@@ -554,8 +532,7 @@ jus	OOV	just
 jealous	IV	jealous
 fans	IV	fans
 !	NO	!
-25
-_	NO	_
+24
 imagine	IV	imagine
 ?	NO	?
 rt	IV	rt
@@ -694,7 +671,7 @@ nigga	OOV	nigger
 13
 ugh	IV	ugh
 yea	IV	yea
-c'mon	OOV	c'mon
+cmon	OOV	cmon
 a	IV	a
 wat	OOV	what
 ya	IV	ya
@@ -723,7 +700,7 @@ another	IV	another
 ...	NO	...
 ...	NO	...
 lol	OOV	lol
-23
+24
 rt	IV	rt
 @misternrg	NO	@misternrg
 #2	NO	#2
@@ -736,7 +713,8 @@ final	IV	final
 ...	NO	...
 ...	NO	...
 ...	NO	...
-i'm	IV	i'm
+i	IV	i
+am IV am
 still	IV	still
 in	IV	in
 love	IV	love
@@ -747,57 +725,6 @@ n	OOV	and
 will	IV	will
 always	IV	always
 b	OOV	be
-21
-@cherrymartines	NO	@cherrymartines
-s	OOV	s
-o	OOV	o
-2	OOV	2
-lefty-miller	OOV	lefty-miller
-,	NO	,
-gedda-b	OOV	gedda-b
-,	NO	,
-d-block	OOV	d-block
-,	NO	,
-b-zo	OOV	b-zo
-,	NO	,
-l-knuckles	OOV	l-knuckles
-my	IV	my
-love	IV	love
-monsta	OOV	monsta
-holdin	OOV	holding
-it	IV	it
-down	IV	down
-in	IV	in
-rikers	OOV	rikers
-28
-@jmurphyyybaby	NO	@jmurphyyybaby
-u	OOV	you
-neva	IV	neva
-told	IV	told
-me	IV	me
-wat	OOV	what
-ya	IV	ya
-decision	IV	decision
-was	IV	was
-cuz	OOV	because
-u	OOV	you
-didn't	IV	didn't
-no	IV	no
-if	IV	if
-u	OOV	you
-culd	OOV	could
-get	IV	get
-a	IV	a
-ride	IV	ride
-bak	OOV	back
-2	OOV	to
-skool	OOV	school
-.	NO	.
-y'all	IV	y'all
-got	IV	got
-classes	IV	classes
-tuesday	IV	tuesday
-?	NO	?
 13
 @monicawhaat	NO	@monicawhaat
 lmao	OOV	lmao
@@ -1005,7 +932,7 @@ indian	IV	indian
 !	NO	!
 !	NO	!
 #lieswomentell	NO	#lieswomentell
-15
+14
 wooow	OOV	wooow
 of	IV	of
 course	IV	course
@@ -1019,7 +946,6 @@ comingg	OOV	coming
 .	NO	.
 .	NO	.
 >	NO	>
-_	NO	_
 <	NO	<
 19
 rt	IV	rt
@@ -1136,7 +1062,7 @@ ended	IV	ended
 any	IV	any
 better	IV	better
 ?	NO	?
-38
+37
 sippp	OOV	sippp
 .	NO	.
 :	NO	:
@@ -1144,7 +1070,6 @@ sippp	OOV	sippp
 htur	OOV	htur
 nuhun	OOV	nuhun
 ^	NO	^
-_	NO	_
 ^	NO	^
 rt	IV	rt
 @ndaaahh	NO	@ndaaahh

@@ -1,5 +1,8 @@
+2,to
+4,for
 2m,tomorrow
 abt,about
+b,be
 b/c,because
 bday,birthday
 bgd,background
@@ -39,6 +42,7 @@ tha,the
 thx,thanks
 ure,your
 ur,your
+ur, you are
 u,you
 ve,have
 wat,what
@@ -47,10 +51,12 @@ woz,was
 w,with
 yu,you
 y,why
+yrs,years
 
 kk,okay
 an,and
 lasi,lazy
 wee,week
 tnx, thanks
+bt,but
 

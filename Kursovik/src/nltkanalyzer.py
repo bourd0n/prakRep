@@ -11,8 +11,8 @@ from nltk.tokenize import RegexpTokenizer
 if __name__ == "__main__":
     urlRegex = '(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?'
     specRegex = '([#@]+[\w]+)'
-    symbolsRegex = '[.,!?;\(\)_-]+'
-    simpleWordRegex = '[\w]+'
+    symbolsRegex = '[\^=<>.,!?:;\(\)_\"]+'
+    simpleWordRegex = "[\w'-]+"
 
     tTwit = list(nps_chat.words())
 
@@ -27,7 +27,8 @@ if __name__ == "__main__":
     twitsFile = sys.argv[1]
     varsFile = sys.argv[2]
     outFile = sys.argv[3]
-    mode = sys.argv[4]
+    outTwitFile = sys.argv[4]
+    mode = sys.argv[5]
 
     # open files
     f = open(twitsFile)
@@ -37,6 +38,7 @@ if __name__ == "__main__":
     vars = f.readlines()
     f.close()
     f = open(outFile, 'w')
+    ftwit = open(outTwitFile, 'w')
 
     for k in range(len(twits)):
         twit = twits[k]
@@ -82,6 +84,7 @@ if __name__ == "__main__":
                             tTwit[i] = element
                             #                print 'iter ' + ' '.join(tTwit)
                             perplexity = model.perplexity(tTwit)
+                            perplexity = 0
                             if perplexity < perp:
                                 perp = perplexity
                                 res = element
@@ -101,10 +104,12 @@ if __name__ == "__main__":
         print tTwit
         if mode == 'simpleMode':
 #            print s
-            f.write(s + '\n')
+            ftwit.write(s + '\n')
         if mode == 'testMode':
 #            print tTwit
             f.write(tTwit.__str__() + '\n')
             f.write(types.__str__() + '\n')
+            ftwit.write(s + '\n')
     f.close()
+    ftwit.close()
 

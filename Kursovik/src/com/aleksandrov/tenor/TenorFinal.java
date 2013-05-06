@@ -9,7 +9,8 @@ public class TenorFinal {
 
     private static final String SOURCE_FILE = "/home/samsung/programs/prak/prakRep/Kursovik/src/test";
     private static final String VARS_FILE = "/home/samsung/programs/prak/prakRep/Kursovik/src/vars.txt";
-    private static final String OUT_FILE = "/home/samsung/programs/prak/prakRep/Kursovik/src/out_tweet.txt";
+    private static final String OUT_TWIT_FILE = "/home/samsung/programs/prak/prakRep/Kursovik/src/out_tweet.txt";
+    private static final String OUT_FILE = "/home/samsung/programs/prak/prakRep/Kursovik/src/out.txt";
     private static final String CORPPUS_FILE = "/home/samsung/programs/prak/prakRep/Kursovik/src/corpus_edit1.tweet";
 
     private ArrayList<ArrayList<String>> testingTwits = new ArrayList<ArrayList<String>>();
@@ -29,16 +30,20 @@ public class TenorFinal {
     }
 
     private void processResults() throws FileNotFoundException {
-        int A = 0, B = 0, C = 0;
+        int Aoov = 0, Boov = 0, Coov = 0;
+        int Anorm = 0, Bnorm = 0, Cnorm = 0;
         Scanner scanner = new Scanner(new File(OUT_FILE));
 
         Iterator<ArrayList<String>> it = testingTwits.iterator();
+        int line = 0;
         while (scanner.hasNextLine()) {
+            line++;
             String resTwit = scanner.nextLine();
+            line++;
             String types = scanner.nextLine();
             ArrayList<String> twitTest = it.next();
             Iterator<String> wordIt = twitTest.iterator();
-            Pattern pattern = Pattern.compile("'.+?'");
+            Pattern pattern = Pattern.compile("'.+?'|\".+?\"");
             Matcher matcher = pattern.matcher(resTwit);
             Pattern pattern2 = Pattern.compile("'.+?'");
             Matcher matcher2 = pattern2.matcher(types);
@@ -51,15 +56,17 @@ public class TenorFinal {
                 try {
                     corWord = wordIt.next();
                 } catch (Exception ex) {
+                    System.out.println("NIAL" + twitTest.size());
                     ex.printStackTrace();
                 }
                 StringTokenizer st = new StringTokenizer(corWord, " \t\n\r");
-                st.nextToken();
+                String sourceWord = st.nextToken();
 
                 String resWord = matcher.group(0);
                 String type = matcher2.group(0);
-                resWord = resWord.replaceAll("'", "");
-                type = type.replaceAll("'", "");
+                resWord = resWord.substring(1, resWord.length() - 1);
+
+                type = type.substring(1, type.length() - 1);//replaceAll("'", "");
 
                 String trueType = st.nextToken();
                 String trueWord = "";// st.nextToken();
@@ -69,27 +76,61 @@ public class TenorFinal {
                 }
 
                 //add to A, B, C, D
-                if ("OOV".equals(trueType)) {
+/*                if ("OOV".equals(trueType)) {
                     assert trueWord != null;
+*//*
                     if ("OOV".equals(type) && resWord.trim().equalsIgnoreCase(trueWord.trim())) {
                         A++;
                     } else
                         C++;
+*//*
+
+                    if ("OOV".equals(type)) {
+                        Aoov++;
+                        if (resWord.trim().equalsIgnoreCase(trueWord.trim())) {
+                            Anorm++;
+                        } else
+                            Cnorm++;
+                    } else
+                        Coov++;
                 } else if ("IV".equals(trueType)) {
                     assert trueWord != null;
-                    if ("IV".equals(type) && resWord.trim().equalsIgnoreCase(trueWord.trim())) {
-                        B++;
+//                    if ("IV".equals(type) && resWord.trim().equalsIgnoreCase(trueWord.trim())) {
+                    if ("IV".equals(type)){
+                        Boov++;
+                    }
+                }*/
+                //System.out.println("        RESULT      ");
+                //System.out.println();
+                if ("OOV".equals(type)) {
+                    assert trueWord != null;
+
+                    if ("OOV".equals(trueType)) {
+                        Aoov++;
+                        if (resWord.trim().equalsIgnoreCase(trueWord.trim())) {
+                            Anorm++;
+                        } else
+                            Cnorm++;
+                    } else {
+                        System.out.println("Source word " + sourceWord + " ResWord " +resWord + " line " + line);
+                        Coov++;
+                    }
+                } else if ("IV".equals(type) || "NO".equals(type)) {
+                    assert trueWord != null;
+                    if ("OOV".equals(trueType)) {
+                        Boov++;
                     }
                 }
 
             }
         }
 
-        double precision = A / (double) (A + B);
-        double recall = A / (double) (A + C);
+        double precision = Aoov / (double) (Aoov + Boov);
+        double recall = Aoov / (double) (Aoov + Coov);
         double f1 = 2 * precision * recall / (precision + recall);
 
-        System.out.println("A " + A + " B " + B + " C " + C);
+        System.out.println("OOV detection");
+        System.out.println("Aoov " + Aoov + " Boov " + Boov + " C " + Coov);
         System.out.println("precision " + precision);
         System.out.println("recall " + recall);
         System.out.println("f1 " + f1);
@@ -149,6 +190,6 @@ public class TenorFinal {
 
         bf.close();
 
-        processor.callPythonForFiles(SOURCE_FILE, VARS_FILE, OUT_FILE, "test".equals(mode));
+        processor.callPythonForFiles(SOURCE_FILE, VARS_FILE, OUT_FILE, OUT_TWIT_FILE, "test".equals(mode));
     }
 }
