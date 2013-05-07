@@ -59,4 +59,5 @@ lasi,lazy
 wee,week
 tnx, thanks
 bt,but
+wknd,weekend
 

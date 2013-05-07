@@ -55,10 +55,14 @@ public class TwitProcessor {
                 } else {
                     String[] aspellVariants = null;
 //                        if (!twitWords[j].matches(".*\\d.*"))
-                    if (!twitWords[j].matches(".*\\d+.*") && !twitWords[j].matches("\\p{Punct}"))
+                    if (!twitWords[j].matches(".*\\d+.*") && !twitWords[j].matches("\\p{Punct}")) {
+                        System.out.println("Aspell find");
                         aspellVariants = aspell.find(twitWords[j]);
-                    System.out.println("twitWords[j] " + twitWords[j] + " Array" + Arrays.toString(aspellVariants));
-                    if (!twitWords[j].matches(".*\\d+.*") && abrMap.find(twitWords[j].trim()) == null
+                    }
+
+                    System.out.println("twitWords[j] " + twitWords[j] + " Array" + Arrays.toString(aspellVariants) + " abrSize " + (abrMap.find(twitWords[j].trim()) == null ? "null" : abrMap.find(twitWords[j].trim()).size()));
+
+                    if (!twitWords[j].matches(".*\\d+.*") //&& abrMap.find(twitWords[j].trim()) == null
                             && aspellVariants != null && aspellVariants.length == 1 && aspellVariants[0].equals(twitWords[j])) {
                         //ok - not OOV
                         ArrayList<String> slangAbr = slangMap.find(twitWords[j].toLowerCase().trim());

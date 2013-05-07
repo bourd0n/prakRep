@@ -10,7 +10,7 @@ from nltk.tokenize import RegexpTokenizer
 
 if __name__ == "__main__":
     urlRegex = '(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?'
-    specRegex = '([#@]+[\w]+)'
+    specRegex = "([#@]+[\w']+)"
     symbolsRegex = '[\^=<>.,!?:;\(\)_\"]+'
     simpleWordRegex = "[\w'-]+"
 
