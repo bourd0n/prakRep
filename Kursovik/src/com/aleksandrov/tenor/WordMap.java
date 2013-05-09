@@ -13,6 +13,10 @@ public class WordMap {
 
 //    private static final String PATH_TO_SLANG = "/home/samsung/programs/prak/prakRep/Kursovik/src/slang.txt";
 
+    public WordMap() throws FileNotFoundException {
+        wordMap = new HashMap<String, ArrayList<String>>();
+    }
+
     public WordMap(String pathToDict, String delimeter) throws FileNotFoundException {
         wordMap = new HashMap<String, ArrayList<String>>();
         init(pathToDict, delimeter);

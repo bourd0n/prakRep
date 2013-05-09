@@ -19,9 +19,12 @@ public class TenorFinal {
         TenorFinal tf = new TenorFinal();
         if (args.length >= 1 && "test".equals(args[0])) {
             tf.processFileForTest();
-            tf.run(args[0]);
+            if (args.length >= 2)
+                tf.run(args[0], args[1]);
+            else
+                tf.run(args[0], null);
         } else
-            tf.run(null);
+            tf.run(null, null);
         //System.out.println(args[0]);
 
         if (args.length >= 1 && "test".equals(args[0])) {
@@ -51,12 +54,15 @@ public class TenorFinal {
 
             /*StringTokenizer st = new StringTokenizer(corWord, " \t\n\r");
             st.nextToken();*/
+            String tempWord = null;
+
             while (matcher.find() && matcher2.find()) {
                 String corWord = "";
                 try {
                     corWord = wordIt.next();
+                    tempWord = corWord;
                 } catch (Exception ex) {
-                    System.out.println("NIAL" + twitTest.size());
+                    System.out.println("NIAL " + twitTest.size() + " tempword " + tempWord);
                     ex.printStackTrace();
                 }
                 StringTokenizer st = new StringTokenizer(corWord, " \t\n\r");
@@ -112,28 +118,44 @@ public class TenorFinal {
                         } else
                             Cnorm++;
                     } else {
-                        System.out.println("Source word " + sourceWord + " ResWord " +resWord + " line " + line);
+                        System.out.println("Source word " + sourceWord + " ResWord " + resWord + " line " + line);
                         Coov++;
                     }
                 } else if ("IV".equals(type) || "NO".equals(type)) {
                     assert trueWord != null;
                     if ("OOV".equals(trueType)) {
                         Boov++;
+                        Bnorm++;
                     }
                 }
 
             }
         }
 
-        double precision = Aoov / (double) (Aoov + Boov);
-        double recall = Aoov / (double) (Aoov + Coov);
-        double f1 = 2 * precision * recall / (precision + recall);
+        double precisionOOV = Aoov / (double) (Aoov + Boov);
+        double recallOOV = Aoov / (double) (Aoov + Coov);
+        double f1OOV = 2 * precisionOOV * recallOOV / (precisionOOV + recallOOV);
 
         System.out.println("OOV detection");
-        System.out.println("Aoov " + Aoov + " Boov " + Boov + " C " + Coov);
-        System.out.println("precision " + precision);
-        System.out.println("recall " + recall);
-        System.out.println("f1 " + f1);
+        System.out.println("Aoov " + Aoov + " Boov " + Boov + " Coov " + Coov);
+        System.out.println("precision " + precisionOOV);
+        System.out.println("recall " + recallOOV);
+        System.out.println("f1 " + f1OOV);
+
+        System.out.println();
+
+
+        System.out.println("Normalization");
+        System.out.println("Anorm" + Anorm + " Cnorm " + Cnorm + " Bnorm " + Bnorm);
+
+        double precisionNorm = Anorm / (double) (Anorm + Bnorm);
+        double recallNorm = Anorm / (double) (Anorm + Cnorm);
+        double f1Norm = 2 * precisionNorm * recallNorm / (precisionNorm + recallNorm);
+
+        System.out.println("precision " + precisionNorm);
+        System.out.println("recall " + recallNorm);
+        System.out.println("f1 " + f1Norm);
+
 
     }
 
@@ -172,12 +194,16 @@ public class TenorFinal {
     }
 
 
-    public void run(String mode) throws IOException {
+    public void run(String mode, String withExeptions) throws IOException {
         Date d1 = new Date();
         System.out.println(d1);
         Scanner scanner = new Scanner(new File(SOURCE_FILE));
         BufferedWriter bf = new BufferedWriter(new FileWriter(new File(VARS_FILE)));
-        TwitProcessor processor = new TwitProcessor();
+        TwitProcessor processor;
+        if (withExeptions != null && withExeptions.equals("excep"))
+            processor = new TwitProcessor(true);
+        else
+            processor = new TwitProcessor(false);
         while (scanner.hasNextLine()) {
             String twit = scanner.nextLine();
             if (!twit.isEmpty()) {

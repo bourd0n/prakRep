@@ -18,15 +18,20 @@ public class TwitProcessor {
 
     private static final String PYTHON_SCRIPT = "/home/samsung/programs/prak/prakRep/Kursovik/src/nltkanalyzer.py";
 
-    private static final String PATH_TO_SLANG = "/home/samsung/programs/prak/prakRep/Kursovik/src/slang.txt";
-    private static final String PATH_TO_ABBREVIATIONS = "/home/samsung/programs/prak/prakRep/Kursovik/src/abr.txt";
+    public static final String PATH_TO_SLANG = "/home/samsung/programs/prak/prakRep/Kursovik/src/slang.txt";
+    public static final String PATH_TO_ABBREVIATIONS = "/home/samsung/programs/prak/prakRep/Kursovik/src/abr.txt";
 
     private WordMap slangMap;
     private WordMap abrMap;
 
-    public TwitProcessor() throws FileNotFoundException {
-        slangMap = new WordMap(PATH_TO_SLANG, ":");
-        abrMap = new WordMap(PATH_TO_ABBREVIATIONS, ",");
+    public TwitProcessor(boolean withExceptions) throws FileNotFoundException {
+        if (withExceptions) {
+            slangMap = new WordMap(PATH_TO_SLANG, ":");
+            abrMap = new WordMap(PATH_TO_ABBREVIATIONS, ",");
+        } else {
+            slangMap = new WordMap();
+            abrMap = new WordMap();
+        }
     }
 
     public String processTwit(String twit) throws IOException {
@@ -190,8 +195,8 @@ public class TwitProcessor {
             while (it.hasNext()) {
                 String s = it.next();
                 System.out.print(" " + s + " " + dm.doubleMetaphone(s, true));
-                //if (!dm.isDoubleMetaphoneEqual(s, twitWord, true))
-                //    it.remove();
+                if (!dm.isDoubleMetaphoneEqual(s, twitWord, true))
+                    it.remove();
             }
 
 //            System.out.println("-");
