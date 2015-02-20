@@ -8,89 +8,8 @@ import scala.Predef;
 
 import java.io.*;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Tenor3 {
-
-    public Collection<String> commonTransform(String word) {
-        Collection<String> possibleTransformations = new ArrayList<String>();
-        //repeated symbols
-        Pattern p = Pattern.compile("(\\w)\\1+");
-        Matcher m = p.matcher(word);
-        while (m.find()) {
-            String res = word.replaceFirst("(\\w)\\1+", m.group(1));
-            System.out.println("After delete repeated " + res);
-            possibleTransformations.add(res);
-            res = word.replaceFirst("(\\w)\\1+", m.group(1));
-            possibleTransformations.add(res);
-            System.out.println("After delete repeated 2 " + res);
-        }
-
-        //replace numbers
-        p = Pattern.compile("\\d");
-        m = p.matcher(word);
-
-        while (m.find()) {
-            String finded = m.group();
-            Integer num = new Integer(finded);
-            int pos = word.indexOf(finded);
-            //todo: case of several same digits
-            //todo: 2 - to, 4 - for
-            if (!finded.equals(word)) {
-                //not single number
-                //todo: think about if in end, begin or middle of the word
-                //todo: think about change of replaceFirst (repeat number)
-                switch (num) {
-                    case 0:
-                        possibleTransformations.add(word.replaceFirst(finded, "o"));
-                        break;
-                    case 1:
-                        possibleTransformations.add(word.replaceFirst(finded, "one"));
-                        possibleTransformations.add(word.replaceFirst(finded, "won"));
-                        break;
-                    case 2:
-                        possibleTransformations.add(word.replaceFirst(finded, "to"));
-                        possibleTransformations.add(word.replaceFirst(finded, "too"));
-                        possibleTransformations.add(word.replaceFirst(finded, "two"));
-                        break;
-                    case 3:
-                        possibleTransformations.add(word.replaceFirst(finded, "e"));
-                        break;
-                    case 4:
-                        possibleTransformations.add(word.replaceFirst(finded, "for"));
-                        possibleTransformations.add(word.replaceFirst(finded, "fore"));
-                        possibleTransformations.add(word.replaceFirst(finded, "four"));
-                        possibleTransformations.add(word.replaceFirst(finded, "a"));   //?
-                        break;
-                    case 5:
-                        possibleTransformations.add(word.replaceFirst(finded, "s"));
-                        break;
-                    case 6:
-                        possibleTransformations.add(word.replaceFirst(finded, "b"));
-                        possibleTransformations.add(word.replaceFirst(finded, "g"));
-                        break;
-                    case 7:
-                        possibleTransformations.add(word.replaceFirst(finded, "t")); //?
-                        break;
-                    case 8:
-                        possibleTransformations.add(word.replaceFirst(finded, "ate"));
-                        possibleTransformations.add(word.replaceFirst(finded, "ait"));
-                        possibleTransformations.add(word.replaceFirst(finded, "eat"));
-                        possibleTransformations.add(word.replaceFirst(finded, "eate"));
-                        possibleTransformations.add(word.replaceFirst(finded, "ight"));
-                        possibleTransformations.add(word.replaceFirst(finded, "aight"));
-                        break;
-                    case 9:
-                        possibleTransformations.add(word.replaceFirst(finded, "g"));
-                        break;
-                }
-            }
-        }
-
-
-        return possibleTransformations;
-    }
 
     public static final double LEXICAL_SIMILARITY_LIMIT = 0.60;
 
@@ -106,7 +25,8 @@ public class Tenor3 {
             e.printStackTrace();
         }
 
-        String[] twitWords = twit.split(" ");
+        String[] twitWords = twit.toLowerCase().split(" ");
+
 
         Aspell aspell = null;
         try {
@@ -115,7 +35,7 @@ public class Tenor3 {
             e.printStackTrace();
         }
 
-        Tenor3 tenor = new Tenor3();
+        CommonTransform commonTransform = new CommonTransform();
 
         int i = 0;
         Collection<String> posibleVars = new ArrayList<String>();
@@ -134,14 +54,18 @@ public class Tenor3 {
                 i++;
             } else {
                 //OOV
+
+
                 Collection<String> possibleVariants = new ArrayList<String>();
                 for (String s : aspellVariants) {
                     System.out.println("1 " + s);
                     possibleVariants.add(s);
                 }
 
+                //if (Dictionary twitWords[j])
+
                 //Common transformations like repeated symbols and numbers
-                possibleVariants.addAll(tenor.commonTransform(twitWords[j]));
+                possibleVariants.addAll(commonTransform.getCommonTransformations(twitWords[j]));
 
                 if (!twitWords[j].matches(".*\\d.*")) {
                     DoubleMetaphone dm = new DoubleMetaphone();
