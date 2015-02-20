@@ -1,0 +1,66 @@
+< i.self -> s.add:s -> i.dec> -> self.sum
+
+</i.div | s.self/> -> self.sum
+
+ qwe.self -> b.dec:s -> "qwe".string:-100 -> -100.get ->
+< dec.self -> self.dec -> < dcc.push:1 ->
+/ i.div -> self.sum -> / ".arg".add:i | "".op:i / | asd.qwe / -> self.qwe > -> self.qwe -> push.qwe > -> 
+self.self ->
+s.zero -> self.sum
+
+qwe.self ->
+b.dec:s ->
+"qwe".string:-100 ->
+-100.get ->
+<
+    dec.self ->
+    self.dec ->
+    <
+        dcc.push:1 ->
+        /
+            i.div ->
+            self.sum ->
+            /
+                ".arg".add:i
+            |
+                "".op:i
+            /
+        |
+            asd.qwe
+        / ->
+        self.qwe
+    > -> self.qwe
+     ->
+    push.qwe
+> -> self.self
+ ->
+s.zero ->
+self.sum
+
+
+
+ qwe.self -> b.dec:s -> "qwe".string:-100 -> --100.99 ->
+< dec.self -> self.-100 -> < dcc.push.1 ->
+/ i.div -> self.-"qwe" -> / ".arg".add:i:j | "".!op:i / | asd.arg / self."qwe" > -> "self".qwe -> push.qwe > -> 
+self.self ->
+s.zero -> .self.sum
+
+
+<
+    i.self ->
+    s.add:s ->
+    i.dec ->
+    /
+        i.div ->
+        self.sum
+    |
+        s.self
+    /
+> -> self.sum
+ ->
+i.zero ->
+arg.self ->
+i.add:i ->
+s.zero ->
+self.sum
+
